@@ -1,17 +1,12 @@
 import 'package:flutter/material.dart';
-import 'package:firebase_core/firebase_core.dart';
-import 'package:shekel/service/default_service.dart';
-import 'firebase_options.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 import 'model/user.dart';
 import 'model/transaction.dart' as shekel;
+import 'service/default_service.dart';
 
 Future<void> main() async {
   runApp(const MyApp());
-
-  await Firebase.initializeApp(
-    options: DefaultFirebaseOptions.currentPlatform,
-  );
 }
 
 class MyApp extends StatelessWidget {
@@ -65,13 +60,63 @@ class MyHomePage extends StatefulWidget {
 }
 
 class _MyHomePageState extends State<MyHomePage> {
-  late User _user;
+  String? _username;
+  User? _user;
   List<shekel.Transaction> _transactions = [];
   final DefaultService _service = DefaultService();
 
-  void _login() {
-    _service.getUser(userId).then((u) => _setUser(u)
+  @override
+  void initState() {
+    super.initState();
+
+    SharedPreferences.getInstance().then((preferences) => _loadUser(preferences));
   }
+
+  void _showUsernameModal(BuildContext context) async {
+    String? result = await showDialog<String>(
+      context: context,
+      builder: (BuildContext context) {
+        return AlertDialog(
+          title: const Text("Enter Username"),
+          content: TextField(
+            onChanged: (value) {
+              _username = value;
+            },
+          ),
+          actions: [
+            TextButton(
+              onPressed: () {
+                Navigator.pop(context);
+              },
+              child: const Text("Cancel"),
+            ),
+            TextButton(
+              onPressed: () {
+                Navigator.pop(context, _username);
+              },
+              child: const Text("OK"),
+            ),
+          ],
+        );
+      },
+    );
+
+    if (result != null) {
+      _username = result;
+    }
+  }
+
+  _loadUser(preferences) {
+    var userId = preferences.getString('userId');
+    var familyId = preferences.getString('familyId');
+    if (userId != null && familyId != null) {
+      _service.getUser(userId).then((u) => _setUser(u));
+    }
+  }
+
+  // void _login() {
+  //   _service.getUser(userId).then((u) => _setUser(u)
+  // }
 
   void _setUser(User user) {
     setState(() {
@@ -80,7 +125,7 @@ class _MyHomePageState extends State<MyHomePage> {
       // so that the display can reflect the updated values. If we changed
       // _counter without calling setState(), then the build method would not be
       // called again, and so nothing would appear to happen.
-      _user = _user;
+      _user = user;
       _service.getTransactions(user.id, 5).then((t) => _transactions = t);
     });
   }
@@ -140,7 +185,7 @@ class _MyHomePageState extends State<MyHomePage> {
         ),
       ),
       floatingActionButton: FloatingActionButton(
-        onPressed: _login(),
+        onPressed: () {_showUsernameModal(context);},
         tooltip: 'Login',
         child: const Icon(Icons.login),
       ), // This trailing comma makes auto-formatting nicer for build methods.

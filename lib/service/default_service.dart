@@ -2,10 +2,20 @@ import '../model/user.dart';
 import '../model/family.dart';
 import '../model/transaction.dart' as shekel;
 import 'package:cloud_firestore/cloud_firestore.dart';
+import '../firebase_options.dart';
+import 'package:firebase_core/firebase_core.dart';
 
 class DefaultService {
-  // Initialize Cloud Firestore.
-  FirebaseFirestore firestore = FirebaseFirestore.instance;
+  
+  late FirebaseFirestore firestore;
+  
+  DefaultService() {
+    // initialize firebase
+    Firebase.initializeApp(options: DefaultFirebaseOptions.android).then((app) => {
+        // Initialize Cloud Firestore.
+        firestore = FirebaseFirestore.instance
+      });
+  }
 
     // // Listen for changes to the data.
     // myRef.snapshots().listen((snapshot) {

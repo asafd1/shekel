@@ -39,6 +39,7 @@ dependencies:
   firebase_core: ^2.15.1
   firebase_core_platform_interface: ^4.8.0
   uuid: ^4.0.0
+  shared_preferences: ^2.2.1
 
 dev_dependencies:
   flutter_test:
