@@ -167,28 +167,38 @@ class _MyHomePageState extends State<MyHomePage> {
           // wireframe for each widget.
           mainAxisAlignment: MainAxisAlignment.center,
           children: <Widget>[
-            const Text(
-              'Your balance:',
-            ),
-            Text(
-              '$_user.balance',
-              style: Theme.of(context).textTheme.headlineMedium,
-            ),
-            const Text(
-              'Transactions:',
-            ),
-            Text(
-              '$_transactions',
-              style: Theme.of(context).textTheme.headlineMedium,
-            ),
+            if (_user != null)
+              Column(
+                children: <Widget>[
+                  Text(
+                    'Welcome ' + '$_username',
+                     style: Theme.of(context).textTheme.headlineMedium,
+                  ),
+                  const Text(
+                    'Your balance:',
+                  ),
+                  Text(
+                    '$_user.balance',
+                    style: Theme.of(context).textTheme.headlineMedium,
+                  ),
+                  const Text(
+                    'Transactions:',
+                  ),
+                  Text(
+                    '$_transactions',
+                    style: Theme.of(context).textTheme.headlineMedium,
+                  ),
+                ],
+              ),
+            if (_user == null)
+              FloatingActionButton(
+                onPressed: () {_showUsernameModal(context);},
+                tooltip: 'Login',
+                child: const Icon(Icons.account_circle),
+            ), // This trailing comma makes auto-formatting nicer for build methods.
           ],
         ),
       ),
-      floatingActionButton: FloatingActionButton(
-        onPressed: () {_showUsernameModal(context);},
-        tooltip: 'Login',
-        child: const Icon(Icons.login),
-      ), // This trailing comma makes auto-formatting nicer for build methods.
     );
   }
 }
