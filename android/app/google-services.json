@@ -1,0 +1,46 @@
+{
+  "project_info": {
+    "project_number": "706057404434",
+    "project_id": "shekel-41250",
+    "storage_bucket": "shekel-41250.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:706057404434:android:7041f5c4f0d642374618cb",
+        "android_client_info": {
+          "package_name": "com.example.shekel"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "706057404434-4aaecbnulgm4nksp7b7keinn1s4mok26.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyADO_wUITZsJQf6pweD2dVKuCWbjvhGPtM"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "706057404434-4aaecbnulgm4nksp7b7keinn1s4mok26.apps.googleusercontent.com",
+              "client_type": 3
+            },
+            {
+              "client_id": "706057404434-o37t3g59eodvfbr6kqc6banpe9ue3i20.apps.googleusercontent.com",
+              "client_type": 2,
+              "ios_info": {
+                "bundle_id": "com.example.shekel"
+              }
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
