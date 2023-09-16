@@ -1,18 +1,55 @@
+import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
-import 'package:shared_preferences/shared_preferences.dart';
+import 'package:shekel/widgets/family_form.dart';
+import 'package:shekel/widgets/family_view.dart';
 
-import 'model/user.dart';
-import 'model/transaction.dart' as shekel;
+import 'package:shared_preferences/shared_preferences.dart';
+import 'firebase_options.dart';
 import 'service/default_service.dart';
+import 'util/util.dart';
+
+const familyIdKey = 'familyId';
+const userIdKey = 'userId';
 
 Future<void> main() async {
-  runApp(const MyApp());
+  WidgetsFlutterBinding.ensureInitialized();
+  FirebaseApp app =
+      await Firebase.initializeApp(options: DefaultFirebaseOptions.android);
+
+  var sharedPreferences = await SharedPreferences.getInstance();
+  runApp(AppMain(DefaultService(app), sharedPreferences));
 }
 
-class MyApp extends StatelessWidget {
-  const MyApp({super.key});
+// _loadUser(preferences) {
+//   var userId = preferences.getString('userId');
+//   var familyId = preferences.getString('familyId');
+//   if (userId != null && familyId != null) {
+//     _service.getUser(userId).then((u) => _setUser(u));
+//   }
+// }
 
-  // This widget is the root of your application.
+class AppMain extends StatefulWidget {
+  final DefaultService _service;
+  final SharedPreferences _sharedPreferences;
+
+  const AppMain(this._service, this._sharedPreferences, {super.key});
+
+  @override
+  State<StatefulWidget> createState() {
+    return _AppMainState();
+  }
+}
+
+// create state class for AppMain
+class _AppMainState extends State<AppMain> {
+  String? _familyId;
+
+  @override
+  void initState() {
+    super.initState();
+    _familyId = widget._sharedPreferences.getString(familyIdKey);
+  }
+
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
@@ -36,169 +73,29 @@ class MyApp extends StatelessWidget {
         colorScheme: ColorScheme.fromSeed(seedColor: Colors.deepPurple),
         useMaterial3: true,
       ),
-      home: const MyHomePage(title: 'Shekel'),
+      home: _getHomeWidget(),
     );
   }
-}
 
-class MyHomePage extends StatefulWidget {
-  const MyHomePage({super.key, required this.title});
-
-  // This widget is the home page of your application. It is stateful, meaning
-  // that it has a State object (defined below) that contains fields that affect
-  // how it looks.
-
-  // This class is the configuration for the state. It holds the values (in this
-  // case the title) provided by the parent (in this case the App widget) and
-  // used by the build method of the State. Fields in a Widget subclass are
-  // always marked "final".
-
-  final String title;
-
-  @override
-  State<MyHomePage> createState() => _MyHomePageState();
-}
-
-class _MyHomePageState extends State<MyHomePage> {
-  String? _username;
-  User? _user;
-  List<shekel.Transaction> _transactions = [];
-  final DefaultService _service = DefaultService();
-
-  @override
-  void initState() {
-    super.initState();
-
-    SharedPreferences.getInstance().then((preferences) => _loadUser(preferences));
-  }
-
-  void _showUsernameModal(BuildContext context) async {
-    String? result = await showDialog<String>(
-      context: context,
-      builder: (BuildContext context) {
-        return AlertDialog(
-          title: const Text("Enter Username"),
-          content: TextField(
-            onChanged: (value) {
-              _username = value;
-            },
-          ),
-          actions: [
-            TextButton(
-              onPressed: () {
-                Navigator.pop(context);
-              },
-              child: const Text("Cancel"),
-            ),
-            TextButton(
-              onPressed: () {
-                Navigator.pop(context, _username);
-              },
-              child: const Text("OK"),
-            ),
-          ],
-        );
-      },
-    );
-
-    if (result != null) {
-      _username = result;
-    }
-  }
-
-  _loadUser(preferences) {
-    var userId = preferences.getString('userId');
-    var familyId = preferences.getString('familyId');
-    if (userId != null && familyId != null) {
-      _service.getUser(userId).then((u) => _setUser(u));
-    }
-  }
-
-  // void _login() {
-  //   _service.getUser(userId).then((u) => _setUser(u)
-  // }
-
-  void _setUser(User user) {
+  _createFamily(String name, String? image) {
     setState(() {
-      // This call to setState tells the Flutter framework that something has
-      // changed in this State, which causes it to rerun the build method below
-      // so that the display can reflect the updated values. If we changed
-      // _counter without calling setState(), then the build method would not be
-      // called again, and so nothing would appear to happen.
-      _user = user;
-      _service.getTransactions(user.id, 5).then((t) => _transactions = t);
+      widget._service
+          .createFamily(name, image)
+          .then((family) {
+            widget._sharedPreferences.setString(familyIdKey, family.id);
+            _familyId = family.id;
+          });
     });
   }
 
-  @override
-  Widget build(BuildContext context) {
-    // This method is rerun every time setState is called, for instance as done
-    // by the _incrementCounter method above.
-    //
-    // The Flutter framework has been optimized to make rerunning build methods
-    // fast, so that you can just rebuild anything that needs updating rather
-    // than having to individually change instances of widgets.
-    return Scaffold(
-      appBar: AppBar(
-        // TRY THIS: Try changing the color here to a specific color (to
-        // Colors.amber, perhaps?) and trigger a hot reload to see the AppBar
-        // change color while the other colors stay the same.
-        backgroundColor: Theme.of(context).colorScheme.inversePrimary,
-        // Here we take the value from the MyHomePage object that was created by
-        // the App.build method, and use it to set our appbar title.
-        title: Text(widget.title),
-      ),
-      body: Center(
-        // Center is a layout widget. It takes a single child and positions it
-        // in the middle of the parent.
-        child: Column(
-          // Column is also a layout widget. It takes a list of children and
-          // arranges them vertically. By default, it sizes itself to fit its
-          // children horizontally, and tries to be as tall as its parent.
-          //
-          // Column has various properties to control how it sizes itself and
-          // how it positions its children. Here we use mainAxisAlignment to
-          // center the children vertically; the main axis here is the vertical
-          // axis because Columns are vertical (the cross axis would be
-          // horizontal).
-          //
-          // TRY THIS: Invoke "debug painting" (choose the "Toggle Debug Paint"
-          // action in the IDE, or press "p" in the console), to see the
-          // wireframe for each widget.
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: <Widget>[
-            if (_user != null)
-              Column(
-                children: <Widget>[
-                  Text(
-                    'Welcome ' + '$_username',
-                     style: Theme.of(context).textTheme.headlineMedium,
-                  ),
-                  const Text(
-                    'Your balance:',
-                  ),
-                  Text(
-                    '$_user.balance',
-                    style: Theme.of(context).textTheme.headlineMedium,
-                  ),
-                  const Text(
-                    'Transactions:',
-                  ),
-                  Text(
-                    '$_transactions',
-                    style: Theme.of(context).textTheme.headlineMedium,
-                  ),
-                ],
-              ),
-            if (_user == null)
-              FloatingActionButton(
-                onPressed: () {_showUsernameModal(context);},
-                tooltip: 'Login',
-                child: const Icon(Icons.account_circle),
-            ), // This trailing comma makes auto-formatting nicer for build methods.
-          ],
-        ),
-      ),
-    );
+  Widget _getHomeWidget() {
+    if (_familyId != null) {
+      return loadWidgetAsync(widget._service.getFamily(_familyId!),
+          (family) => FamilyViewWidget(family: family));
+    } else {
+      return FamilyFormWidget(
+        onSubmit: (name, image) => {_createFamily(name, image)},
+      );
+    }
   }
 }

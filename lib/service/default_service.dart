@@ -2,21 +2,18 @@ import '../model/user.dart';
 import '../model/family.dart';
 import '../model/transaction.dart' as shekel;
 import 'package:cloud_firestore/cloud_firestore.dart';
-import '../firebase_options.dart';
 import 'package:firebase_core/firebase_core.dart';
+
+import '../util/exceptions.dart';
 
 class DefaultService {
   
   late FirebaseFirestore firestore;
   
-  DefaultService() {
-    // initialize firebase
-    Firebase.initializeApp(options: DefaultFirebaseOptions.android).then((app) => {
-        // Initialize Cloud Firestore.
-        firestore = FirebaseFirestore.instance
-      });
+  DefaultService(FirebaseApp app) {
+    firestore = FirebaseFirestore.instanceFor(app: app);
   }
-
+    
     // // Listen for changes to the data.
     // myRef.snapshots().listen((snapshot) {
     //   // Do something with the data.
@@ -25,14 +22,18 @@ class DefaultService {
     //   }
     // });
 
+  Future<Map<String, dynamic>> docToJson(DocumentReference<Object?> doc) async {
+    return (await doc.get()).data() as Map<String, dynamic>;
+  }
+
+
   // a method to create a family
-  Family createFamily(String name, String image) {
+  Future<Family> createFamily (String name, String? image) async {
     var family = Family(name, image);
   
     CollectionReference families = firestore.collection('families');
-    families.add(family.toJson());
-
-    return family;
+    await families.doc(family.id).set(family.toJson());
+    return family;   
   }
 
   // a method to remove a family
@@ -51,7 +52,11 @@ class DefaultService {
   Future<Family> getFamily(String familyId) async {
     CollectionReference families = firestore.collection('families');
     DocumentSnapshot snapshot = await families.doc(familyId).get();
-    return Family.fromJson(snapshot.data() as Map<String, dynamic>);
+    if (snapshot.exists) {
+      return Family.fromJson(snapshot.data() as Map<String, dynamic>);
+    } else {
+      throw FamilyNotFoundException(familyId);
+    }
   }
 
   // a method to create a transaction
@@ -59,7 +64,7 @@ class DefaultService {
     var transaction = shekel.Transaction(userId, amount);
   
     CollectionReference transactions = firestore.collection('transactions');
-    transactions.add(transaction.toJson());
+    transactions.doc(transaction.id).set(transaction.toJson());
     
     // update user balance
     var user = await getUser(userId);
@@ -82,8 +87,11 @@ class DefaultService {
                   String username, 
                   String firstName,
                   String lastName, 
-                  String image) {
-    return User(familyId, role, username, firstName, lastName, image);
+                  String? image) {
+    var user = User(familyId, role, username, firstName, lastName, image);
+    CollectionReference users = firestore.collection('users');
+    users.doc(user.id).set(user.toJson());
+    return user;
   }
 
   // a method to remove a user

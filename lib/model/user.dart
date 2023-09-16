@@ -1,3 +1,4 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:uuid/uuid.dart';
 
 enum Role {  
@@ -13,10 +14,10 @@ class User {
   String username;
   String firstName;
   String lastName;
-  String image;
+  String? image;
   int balance;
-  DateTime createdAt;
-  DateTime updatedAt;
+  Timestamp createdAt;
+  Timestamp updatedAt;
 
   User._(
     this.id,
@@ -44,8 +45,8 @@ class User {
       lastName,
       image,
       balance,
-      now,
-      now,
+      Timestamp.fromDate(now),
+      Timestamp.fromDate(now),
     );
   }
 
@@ -53,14 +54,14 @@ class User {
     return User._(
       json['id'],
       json['familyId'],
-      json['role'],
+      Role.values.byName(json['role']),
       json['username'],
       json['firstName'],
       json['lastName'],
       json['image'],
       json['balance'],
-      DateTime.parse(json['createdAt']),
-      DateTime.parse(json['updatedAt']),
+      json['createdAt'],
+      json['updatedAt'],
     );
   }
 
@@ -68,13 +69,13 @@ class User {
   Map<String, dynamic> toJson() => {
         "id": id,
         "familyId": familyId,
-        "role": role,
+        "role": role.name,
         "username": username,
         "firstName": firstName,
         "lastName": lastName,
         "image": image,
         "balance": balance,
-        "created_at": createdAt,
-        "updated_at": updatedAt,
+        "createdAt": createdAt,
+        "updatedAt": updatedAt,
   };
 }
