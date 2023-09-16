@@ -49,6 +49,7 @@ class DefaultService {
   }
 
   // a method to get a family
+  // TODO: get all family users
   Future<Family> getFamily(String familyId) async {
     CollectionReference families = firestore.collection('families');
     DocumentSnapshot snapshot = await families.doc(familyId).get();
@@ -81,6 +82,18 @@ class DefaultService {
     return snapshot.docs.map((doc) => shekel.Transaction.fromJson(doc.data() as Map<String, dynamic>)).toList();
   }
 
+  _addUserToFamily(User user) async {
+    var family = await getFamily(user.familyId);
+    family.addUser(user.id, user.role);
+    updateFamily(family);
+  }
+
+  _removeUserFromFamily(User user) async {
+    var family = await getFamily(user.familyId);
+    family.removeUser(user.id, user.role);
+    updateFamily(family);
+  }
+
   // a method to create a user
   User createUser(String familyId, 
                   Role role, 
@@ -91,12 +104,16 @@ class DefaultService {
     var user = User(familyId, role, username, firstName, lastName, image);
     CollectionReference users = firestore.collection('users');
     users.doc(user.id).set(user.toJson());
+
+    _addUserToFamily(user);
     return user;
   }
 
   // a method to remove a user
-  void removeUser(String userId) {
+  void removeUser(String userId) async {
     CollectionReference users = firestore.collection('users');
+    var user = await getUser(userId);
+    _removeUserFromFamily(user);
     users.doc(userId).delete();
   }
 

@@ -1,44 +1,59 @@
 import 'package:flutter/material.dart';
-import 'package:shekel/widgets/user_tile.dart';
+import 'package:shekel/widgets/child_tile.dart';
 
 import '../model/user.dart';
 
 class ChildrenListWidget extends StatelessWidget {
   final List<User> children = const [];
+  final Function(String username, String firstname, String lastname, String? image) onAddChildPressed;
+  final Function(String userId) onRemoveChildPressed;
+  final Function(String userId, int amount) onCreateTransaction;
 
   const ChildrenListWidget(
       {super.key,
       required List<User> children,
-      required Function() onAddChildPressed,
-      required Function() onRemoveChildPressed,
-      required Function() onCreateTransaction,});
+      required this.onAddChildPressed,
+      required this.onRemoveChildPressed,
+      required this.onCreateTransaction,});
 
   @override
   Widget build(BuildContext context) {
+    return Scaffold(
+      body: _buildUserListView(),
+      floatingActionButton: FloatingActionButton(
+        onPressed: () {
+          onAddChildPressed('username', 'firstname', 'lastname', null);
+        },
+        child: const Icon(Icons.add),
+      ),
+    );
+  }
+
+  Widget _buildUserListView() {
     if (children.isEmpty) {
       return const Center(
         child: Text('No users available.'),
       );
-    } else {
-      return ListView.builder(
-        itemCount: children.length,
-        itemBuilder: (context, index) {
-          final user = children[index];
-          return UserListTile(
-            username: user.firstName,
-            balance: user.balance,
-            onAddCurrencyPressed: () {
-              // Implement logic to add money to the child's balance
-            },
-            onRemoveCurrencyPressed: () {
-              // Implement logic to remove money from the child's balance
-            },
-            onRemoveUserPressed: () {
-              // Implement logic to remove the child
-            },
-          );
-        },
-      );
-    }   
+    }
+
+    return ListView.builder(
+      itemCount: children.length,
+      itemBuilder: (context, index) {
+        final user = children[index];
+        return UserListTile(
+          username: user.firstName,
+          balance: user.balance,
+          onAddCurrencyPressed: () {
+            onCreateTransaction(user.id, 10);
+          },
+          onRemoveCurrencyPressed: () {
+            onCreateTransaction(user.id, -10);
+          },
+          onRemoveUserPressed: () {
+            onRemoveChildPressed(user.id);
+          },
+        );
+      },
+    );
   }
 }

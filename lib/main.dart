@@ -5,6 +5,7 @@ import 'package:shekel/widgets/family_view.dart';
 
 import 'package:shared_preferences/shared_preferences.dart';
 import 'firebase_options.dart';
+import 'model/user.dart';
 import 'service/default_service.dart';
 import 'util/util.dart';
 
@@ -40,7 +41,6 @@ class AppMain extends StatefulWidget {
   }
 }
 
-// create state class for AppMain
 class _AppMainState extends State<AppMain> {
   String? _familyId;
 
@@ -88,10 +88,31 @@ class _AppMainState extends State<AppMain> {
     });
   }
 
+  _addChild(String username, String firstname, String lastname, String? image) {
+    setState(() {
+      widget._service
+          .createUser(_familyId!, Role.child, username, firstname, lastname, image);
+    });
+  }
+
+  _removeChild(String userId) {
+    setState(() {
+      widget._service
+          .removeUser(userId);
+    });
+  }
+
+  _createTransaction(String userId, int amount) {
+    setState(() {
+      widget._service
+          .createTransaction(userId, amount);
+    });
+  }
+
   Widget _getHomeWidget() {
     if (_familyId != null) {
       return loadWidgetAsync(widget._service.getFamily(_familyId!),
-          (family) => FamilyViewWidget(family: family));
+          (family) => FamilyViewWidget(family: family, onAddChildPressed: _addChild, onRemoveChildPressed: _removeChild, onCreateTransaction: _createTransaction));
     } else {
       return FamilyFormWidget(
         onSubmit: (name, image) => {_createFamily(name, image)},

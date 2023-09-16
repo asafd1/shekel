@@ -6,8 +6,8 @@ class Family {
   late String id;
   String name;
   String? imageUrl;
-  List<User> parents = [];
-  List<User> children = [];
+  List<String> parents = [];
+  List<String> children = [];
   Timestamp createdAt;
   Timestamp updatedAt;
 
@@ -41,13 +41,15 @@ class Family {
     updatedAt = Timestamp.fromDate(DateTime.now());
   }
 
-  void addParent(User parent) {
-    parents.add(parent);
+  void addUser(String userId, Role role) {
+    var list = role == Role.parent ? parents : children;
+    list.add(userId);
     updatedAt = Timestamp.fromDate(DateTime.now());
   }
 
-  void addChild(User child) {
-    children.add(child);
+  void removeUser(String userId, Role role) {
+    var list = role == Role.parent ? parents : children;
+    list.remove(userId);
     updatedAt = Timestamp.fromDate(DateTime.now());
   }
 
