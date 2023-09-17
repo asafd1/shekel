@@ -62,7 +62,7 @@ class DefaultService {
   }
 
   // a method to create a transaction
-  Future<(shekel.Transaction, int)> createTransaction(String userId, int amount) async {
+  Future<(shekel.Transaction, num)> createTransaction(String userId, num amount) async {
     var transaction = shekel.Transaction(userId, amount);
   
     CollectionReference transactions = firestore.collection('transactions');

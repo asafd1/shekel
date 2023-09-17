@@ -8,7 +8,7 @@ class ChildrenListWidget extends StatelessWidget {
   final List<User> children;
   final Function(String username, String firstname, String lastname, String? image) addChild;
   final Function(String userId) onRemoveChildPressed;
-  final Function(String userId, int amount) onCreateTransaction;
+  final Function(String userId, num amount) onCreateTransaction;
 
   const ChildrenListWidget(
       {super.key,
@@ -47,11 +47,11 @@ class ChildrenListWidget extends StatelessWidget {
         final user = children[index];
         return ChildListTile(
           child: user,
-          onAddCurrencyPressed: () {
-            onCreateTransaction(user.id, 10);
+          onAddCurrencyPressed: (amount) {
+            onCreateTransaction(user.id, amount);
           },
-          onRemoveCurrencyPressed: () {
-            onCreateTransaction(user.id, -10);
+          onRemoveCurrencyPressed: (amount) {
+            onCreateTransaction(user.id, amount * -1);
           },
           onRemoveUserPressed: () {
             onRemoveChildPressed(user.id);

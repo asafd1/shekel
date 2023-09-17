@@ -15,7 +15,7 @@ class User {
   String firstName;
   String lastName;
   String? image;
-  int balance;
+  num balance;
   Timestamp createdAt;
   Timestamp updatedAt;
 

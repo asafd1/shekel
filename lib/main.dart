@@ -21,14 +21,6 @@ Future<void> main() async {
   runApp(AppMain(DefaultService(app), sharedPreferences));
 }
 
-// _loadUser(preferences) {
-//   var userId = preferences.getString('userId');
-//   var familyId = preferences.getString('familyId');
-//   if (userId != null && familyId != null) {
-//     _service.getUser(userId).then((u) => _setUser(u));
-//   }
-// }
-
 class AppMain extends StatefulWidget {
   final DefaultService _service;
   final SharedPreferences _sharedPreferences;
@@ -79,40 +71,41 @@ class _AppMainState extends State<AppMain> {
 
   _createFamily(String name, String? image) {
     setState(() {
-      widget._service
-          .createFamily(name, image)
-          .then((family) {
-            widget._sharedPreferences.setString(familyIdKey, family.id);
-            _familyId = family.id;
-          });
+      widget._service.createFamily(name, image).then((family) {
+        widget._sharedPreferences.setString(familyIdKey, family.id);
+        _familyId = family.id;
+      });
     });
   }
 
   _addChild(String username, String firstname, String lastname, String? image) {
     setState(() {
-      widget._service
-          .createUser(_familyId!, Role.child, username, firstname, lastname, image);
+      widget._service.createUser(
+          _familyId!, Role.child, username, firstname, lastname, image);
     });
   }
 
   _removeChild(String userId) {
     setState(() {
-      widget._service
-          .removeUser(userId);
+      widget._service.removeUser(userId);
     });
   }
 
-  _createTransaction(String userId, int amount) {
+  _createTransaction(String userId, num amount) {
     setState(() {
-      widget._service
-          .createTransaction(userId, amount);
+      widget._service.createTransaction(userId, amount);
     });
   }
 
   Widget _getHomeWidget() {
     if (_familyId != null) {
-      return loadWidgetAsync(widget._service.getFamily(_familyId!),
-          (family) => FamilyViewWidget(family: family, addChild: _addChild, onRemoveChildPressed: _removeChild, onCreateTransaction: _createTransaction));
+      return loadWidgetAsync(
+          widget._service.getFamily(_familyId!),
+          (family) => FamilyViewWidget(
+              family: family,
+              addChild: _addChild,
+              onRemoveChildPressed: _removeChild,
+              onCreateTransaction: _createTransaction));
     } else {
       return FamilyFormWidget(
         onSubmit: (name, image) => {_createFamily(name, image)},

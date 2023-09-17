@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 
+import '../util/util.dart';
+
 class ChildForm extends StatefulWidget {
   final Function(String username, String firstname, String lastname, String? imageUrl) onSubmit;
 
@@ -27,14 +29,6 @@ class ChildFormState extends State<ChildForm> {
     _imageUrlController = TextEditingController();
   }
 
-  _isValidUrl(String url) {
-    return Uri.parse(url).isAbsolute;
-  }
-
-  _isValidEmail(String email) {
-    return RegExp(r"^[a-zA-Z0-9.]+@[a-zA-Z0-9]+\.[a-zA-Z]+").hasMatch(email);
-  }
-
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -45,12 +39,12 @@ class ChildFormState extends State<ChildForm> {
             Title(color: Colors.blue, child: const Text('Add Child', style: TextStyle(fontSize: 30))),
             TextFormField(
               controller: _usernameController,
-              decoration: const InputDecoration(labelText: 'User Email'),
+              decoration: const InputDecoration(hintText: 'Email'),
               validator: (value) {
                 if (value == null || value.isEmpty) {
                   return 'Please enter a user email';
                 }
-                if (!_isValidEmail(value)) {
+                if (!isValidEmail(value)) {
                   return 'User name must be a valid email address';
                 }
                 return null;
@@ -58,7 +52,7 @@ class ChildFormState extends State<ChildForm> {
             ),
             TextFormField(
               controller: _firstnameController,
-              decoration: const InputDecoration(labelText: 'First Name'),
+              decoration: const InputDecoration(hintText: 'First Name'),
               validator: (value) {
                 if (value == null || value.isEmpty) {
                   return 'Please enter a first name';
@@ -68,7 +62,7 @@ class ChildFormState extends State<ChildForm> {
             ),
             TextFormField(
               controller: _lastnameController,
-              decoration: const InputDecoration(labelText: 'Last Name'),
+              decoration: const InputDecoration(hintText: 'Last Name'),
               validator: (value) {
                 if (value == null || value.isEmpty) {
                   return 'Please enter a last name';
@@ -78,9 +72,9 @@ class ChildFormState extends State<ChildForm> {
             ),
             TextFormField(
               controller: _imageUrlController,
-              decoration: const InputDecoration(labelText: 'Image URL'),
+              decoration: const InputDecoration(hintText: 'Image URL'),
               validator: (value) {
-                if (value != null && value.isNotEmpty && !_isValidUrl(value)) {
+                if (value != null && value.isNotEmpty && !isValidUrl(value)) {
                   return 'Please enter a valid URL';
                 }
                 return null;
@@ -100,6 +94,7 @@ class ChildFormState extends State<ChildForm> {
               },
               child: const Text('Submit'),
             ),
+            IconButton(onPressed: () => Navigator.pop(context), icon: const Icon(Icons.arrow_back))
           ],
         ),
       )

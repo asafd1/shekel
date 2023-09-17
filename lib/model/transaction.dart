@@ -3,7 +3,7 @@ import 'package:uuid/uuid.dart';
 class Transaction {
   late String id;
   String userId;
-  int amount;
+  num amount;
   late DateTime createdAt;
 
   Transaction._(
@@ -13,7 +13,7 @@ class Transaction {
     this.createdAt, 
   );
 
-  factory Transaction(String userId, int amount) {
+  factory Transaction(String userId, num amount) {
     var id = const Uuid().v4();
     var now = DateTime.now();
     return Transaction._(id, userId, amount, now);
