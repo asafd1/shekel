@@ -45,9 +45,8 @@ class ChildrenListWidget extends StatelessWidget {
       itemCount: children.length,
       itemBuilder: (context, index) {
         final user = children[index];
-        return UserListTile(
-          username: user.firstName,
-          balance: user.balance,
+        return ChildListTile(
+          child: user,
           onAddCurrencyPressed: () {
             onCreateTransaction(user.id, 10);
           },

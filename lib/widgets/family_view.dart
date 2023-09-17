@@ -33,7 +33,7 @@ class FamilyViewWidget extends StatelessWidget {
           children: children,
           addChild: addChild,
           onRemoveChildPressed: onRemoveChildPressed,
-          onCreateTransaction: onCreateTransaction),
+          onCreateTransaction: onCreateTransaction,),
       
     );
   }
