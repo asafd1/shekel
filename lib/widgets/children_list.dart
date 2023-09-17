@@ -4,14 +4,14 @@ import 'package:shekel/widgets/child_tile.dart';
 import '../model/user.dart';
 
 class ChildrenListWidget extends StatelessWidget {
-  final List<User> children = const [];
+  final List<User> children;
   final Function(String username, String firstname, String lastname, String? image) onAddChildPressed;
   final Function(String userId) onRemoveChildPressed;
   final Function(String userId, int amount) onCreateTransaction;
 
   const ChildrenListWidget(
       {super.key,
-      required List<User> children,
+      required this.children,
       required this.onAddChildPressed,
       required this.onRemoveChildPressed,
       required this.onCreateTransaction,});
@@ -22,7 +22,7 @@ class ChildrenListWidget extends StatelessWidget {
       body: _buildUserListView(),
       floatingActionButton: FloatingActionButton(
         onPressed: () {
-          onAddChildPressed('username', 'firstname', 'lastname', null);
+          onAddChildPressed('username_${DateTime.now().millisecondsSinceEpoch}', 'firstname', 'lastname', null);
         },
         child: const Icon(Icons.add),
       ),
@@ -37,6 +37,7 @@ class ChildrenListWidget extends StatelessWidget {
     }
 
     return ListView.builder(
+      shrinkWrap: true,
       itemCount: children.length,
       itemBuilder: (context, index) {
         final user = children[index];

@@ -21,29 +21,51 @@ class FamilyViewWidget extends StatelessWidget {
       required this.onCreateTransaction});
 
   Widget childrenWidget(List<User> children) {
-    return Scaffold(
-      body: ChildrenListWidget(
+    return Container(
+      constraints: const BoxConstraints(maxHeight: 300, minHeight: 100),
+      decoration: BoxDecoration(
+        border: Border.all(
+          color: Colors.blue, // Border color
+          width: 2.0, // Border width
+        ),
+      ),
+      child: ChildrenListWidget(
           children: children,
           onAddChildPressed: onAddChildPressed,
           onRemoveChildPressed: onRemoveChildPressed,
           onCreateTransaction: onCreateTransaction),
+      
+    );
+  }
+
+  Widget parentsWidget(List<User> parents) {
+    return Container(
+      height: 32,
+      decoration: BoxDecoration(
+        border: Border.all(
+          color: Colors.blue, // Border color
+          width: 2.0, // Border width
+        ),
+      ),
+      child: const Text('parentsWidget'),
     );
   }
 
   @override
   Widget build(BuildContext context) {
     return Card(
-      elevation: 3,
+      elevation: 30,
       margin: const EdgeInsets.all(16.0),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Image.network(
+          Center(
+            child: Image.network(
             family.imageUrl ?? defaultImageUrl,
-            width: double.infinity,
-            height: 200.0,
+            width: 100.0,
+            height: 100.0,
             fit: BoxFit.cover,
-          ),
+          )),
           Padding(
             padding: const EdgeInsets.all(16.0),
             child: Column(
@@ -56,14 +78,8 @@ class FamilyViewWidget extends StatelessWidget {
                     fontWeight: FontWeight.bold,
                   ),
                 ),
-                const SizedBox(
-                  height: 18.0,
-                  child: Text("ParentsWidget(family.parents)"),
-                ),
-                const SizedBox(
-                  height: 18.0,
-                  child: Text("ChildrenWidget(family.parents)"),
-                ),
+                parentsWidget(family.parents),
+                childrenWidget(family.children),
               ],
             ),
           ),

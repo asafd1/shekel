@@ -49,15 +49,16 @@ class DefaultService {
   }
 
   // a method to get a family
-  // TODO: get all family users
   Future<Family> getFamily(String familyId) async {
     CollectionReference families = firestore.collection('families');
     DocumentSnapshot snapshot = await families.doc(familyId).get();
-    if (snapshot.exists) {
-      return Family.fromJson(snapshot.data() as Map<String, dynamic>);
-    } else {
+    if (!snapshot.exists) {
       throw FamilyNotFoundException(familyId);
     }
+    Family family = Family.fromJson(snapshot.data() as Map<String, dynamic>);
+    family.parents = (await getUsers(familyId)).where((user) => user.role == Role.parent).toList();
+    family.children = (await getUsers(familyId)).where((user) => user.role == Role.child).toList();
+    return family;
   }
 
   // a method to create a transaction
@@ -84,7 +85,7 @@ class DefaultService {
 
   _addUserToFamily(User user) async {
     var family = await getFamily(user.familyId);
-    family.addUser(user.id, user.role);
+    family.addUser(user, user.role);
     updateFamily(family);
   }
 

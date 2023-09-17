@@ -6,8 +6,8 @@ class Family {
   late String id;
   String name;
   String? imageUrl;
-  List<String> parents = [];
-  List<String> children = [];
+  late List<User> parents;
+  late List<User> children;
   Timestamp createdAt;
   Timestamp updatedAt;
 
@@ -41,32 +41,26 @@ class Family {
     updatedAt = Timestamp.fromDate(DateTime.now());
   }
 
-  void addUser(String userId, Role role) {
+  void addUser(User user, Role role) {
     var list = role == Role.parent ? parents : children;
-    list.add(userId);
+    list.add(user);
     updatedAt = Timestamp.fromDate(DateTime.now());
   }
 
   void removeUser(String userId, Role role) {
     var list = role == Role.parent ? parents : children;
-    list.remove(userId);
+    list.removeWhere((userId) => userId == userId);
     updatedAt = Timestamp.fromDate(DateTime.now());
   }
 
   // create factory method to convert json to object of this class
-  factory Family.fromJson(Map<String, dynamic> json) {
-    // safely cast from dynamic list to User list
-    List<dynamic> parentsDynamicList = json['parents'];
-    List<User> parents = parentsDynamicList.cast<User>();
-    List<dynamic> childrenDynamicList = json['children'];
-    List<User> children = childrenDynamicList.cast<User>();
-    
+  factory Family.fromJson(Map<String, dynamic> json) {    
     return Family._(
       json['id'],
       json['name'],
       json['image'],
-      parents,
-      children,
+      [], // parents
+      [], // children
       json['createdAt'],
       json['updatedAt'],
     );
@@ -77,8 +71,6 @@ class Family {
         "id": id,
         "name": name,
         "image": imageUrl,
-        "parents": parents,
-        "children": children,
         "createdAt": createdAt,
         "updatedAt": updatedAt,
       };
