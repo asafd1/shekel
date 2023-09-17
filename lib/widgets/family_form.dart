@@ -39,6 +39,7 @@ class FamilyFormWidgetState extends State<FamilyFormWidget> {
         key: _formKey,
         child: Column(
           children: [
+            Title(color: Colors.blue, child: const Text('Add Family', style: TextStyle(fontSize: 30))),
             TextFormField(
               controller: _nameController,
               decoration: const InputDecoration(labelText: 'Family Name'),

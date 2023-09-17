@@ -112,7 +112,7 @@ class _AppMainState extends State<AppMain> {
   Widget _getHomeWidget() {
     if (_familyId != null) {
       return loadWidgetAsync(widget._service.getFamily(_familyId!),
-          (family) => FamilyViewWidget(family: family, onAddChildPressed: _addChild, onRemoveChildPressed: _removeChild, onCreateTransaction: _createTransaction));
+          (family) => FamilyViewWidget(family: family, addChild: _addChild, onRemoveChildPressed: _removeChild, onCreateTransaction: _createTransaction));
     } else {
       return FamilyFormWidget(
         onSubmit: (name, image) => {_createFamily(name, image)},

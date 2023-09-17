@@ -6,7 +6,7 @@ import 'children_list.dart';
 
 class FamilyViewWidget extends StatelessWidget {
   final Family family;
-  final Function(String username, String firstname, String lastname, String? image) onAddChildPressed;
+  final Function(String username, String firstname, String lastname, String? image) addChild;
   final Function(String userId) onRemoveChildPressed;
   final Function(String userId, int amount) onCreateTransaction;
 
@@ -16,7 +16,7 @@ class FamilyViewWidget extends StatelessWidget {
   const FamilyViewWidget(
       {super.key,
       required this.family,
-      required this.onAddChildPressed,
+      required this.addChild,
       required this.onRemoveChildPressed,
       required this.onCreateTransaction});
 
@@ -31,7 +31,7 @@ class FamilyViewWidget extends StatelessWidget {
       ),
       child: ChildrenListWidget(
           children: children,
-          onAddChildPressed: onAddChildPressed,
+          addChild: addChild,
           onRemoveChildPressed: onRemoveChildPressed,
           onCreateTransaction: onCreateTransaction),
       
