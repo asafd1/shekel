@@ -110,7 +110,8 @@ class ChildListTileState extends State<ChildListTile> {
                 Navigator.push(
                   context,
                   MaterialPageRoute(
-                      builder: (context) => ChildView(child: widget.child)),
+                      builder: (context) => ChildView(child: widget.child),
+                  ),
                 );
               },
             ),

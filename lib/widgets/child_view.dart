@@ -54,10 +54,8 @@ class ChildViewState extends State<ChildView> {
 
   @override
   Widget build(BuildContext context) {
-    return Card(
-      elevation: 30,
-      margin: const EdgeInsets.all(16.0),
-      child: Column(
+    return Scaffold(
+      body: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Center(

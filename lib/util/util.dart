@@ -36,16 +36,12 @@ Widget _listView(list, Widget Function(Object) tileBuilder,) {
     );
   }
 
-  return SizedBox(
-            height: 50,
-            width: 50,
-      child: ListView.builder(
+  return ListView.builder(
         shrinkWrap: true,
         itemCount: list.length,
         itemBuilder: (context, index) {
           return tileBuilder(list[index]);
         },
-      ),
     ); 
 } 
 
@@ -53,9 +49,7 @@ Widget listWithTitleAndButton(final String title,
                                 List<Object> list,
                                 Widget Function(dynamic) tileBuilder, 
                                 Widget button) {
-  return MaterialApp(
-    debugShowCheckedModeBanner: false,
-    home: Scaffold(
+  return Scaffold(
       body: 
       Column(
         crossAxisAlignment:
@@ -82,6 +76,5 @@ Widget listWithTitleAndButton(final String title,
           _listView(list, tileBuilder)
         ],
       ),
-    ),
   );
 }
