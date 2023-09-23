@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:shekel/widgets/child_tile.dart';
 
 import '../model/user.dart';
+import '../util/util.dart' as util;
 import 'child_form.dart';
 
 class ChildrenListWidget extends StatelessWidget {
@@ -19,44 +20,32 @@ class ChildrenListWidget extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      body: _buildUserListView(),
-      floatingActionButton: FloatingActionButton(
-        onPressed: () {
+    return util.listWithTitleAndButton('Children', children, _tileBuilder, _addChildButton(context, 'Add Child'));
+  }
+
+  Widget _addChildButton(BuildContext context, String text) {
+    return ElevatedButton(
+      onPressed: () {
           Navigator.push(
               context,
               MaterialPageRoute(builder: (context) => ChildForm(onSubmit: addChild)),
             );
         },
-        child: const Icon(Icons.add),
-      ),
+      child: Text(text),
     );
   }
 
-  Widget _buildUserListView() {
-    if (children.isEmpty) {
-      return const Center(
-        child: Text('No users available.'),
-      );
-    }
-
-    return ListView.builder(
-      shrinkWrap: true,
-      itemCount: children.length,
-      itemBuilder: (context, index) {
-        final user = children[index];
-        return ChildListTile(
-          child: user,
-          onAddCurrencyPressed: (amount) {
-            onCreateTransaction(user.id, amount);
-          },
-          onRemoveCurrencyPressed: (amount) {
-            onCreateTransaction(user.id, amount * -1);
-          },
-          onRemoveUserPressed: () {
-            onRemoveChildPressed(user.id);
-          },
-        );
+  Widget _tileBuilder(user){
+    return ChildListTile(
+      child: user,
+      onAddCurrencyPressed: (amount) {
+        onCreateTransaction(user.id, amount);
+      },
+      onRemoveCurrencyPressed: (amount) {
+        onCreateTransaction(user.id, amount * -1);
+      },
+      onRemoveUserPressed: () {
+        onRemoveChildPressed(user.id);
       },
     );
   }

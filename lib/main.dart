@@ -1,5 +1,7 @@
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
+
 import 'package:shekel/widgets/family_form.dart';
 import 'package:shekel/widgets/family_view.dart';
 
@@ -18,14 +20,17 @@ Future<void> main() async {
       await Firebase.initializeApp(options: DefaultFirebaseOptions.android);
 
   var sharedPreferences = await SharedPreferences.getInstance();
-  runApp(AppMain(DefaultService(app), sharedPreferences));
+  runApp(Provider(
+    create: (context) => DefaultService(app),
+    child: AppMain(sharedPreferences)
+    )
+  );
 }
 
 class AppMain extends StatefulWidget {
-  final DefaultService _service;
   final SharedPreferences _sharedPreferences;
 
-  const AppMain(this._service, this._sharedPreferences, {super.key});
+  const AppMain(this._sharedPreferences, {super.key});
 
   @override
   State<StatefulWidget> createState() {
@@ -41,6 +46,9 @@ class _AppMainState extends State<AppMain> {
     super.initState();
     _familyId = widget._sharedPreferences.getString(familyIdKey);
   }
+
+  // _service getter
+  DefaultService get _service => Provider.of<DefaultService>(context);
 
   @override
   Widget build(BuildContext context) {
@@ -71,7 +79,7 @@ class _AppMainState extends State<AppMain> {
 
   _createFamily(String name, String? image) {
     setState(() {
-      widget._service.createFamily(name, image).then((family) {
+      _service.createFamily(name, image).then((family) {
         widget._sharedPreferences.setString(familyIdKey, family.id);
         _familyId = family.id;
       });
@@ -80,27 +88,27 @@ class _AppMainState extends State<AppMain> {
 
   _addChild(String username, String firstname, String lastname, String? image) {
     setState(() {
-      widget._service.createUser(
+      _service.createUser(
           _familyId!, Role.child, username, firstname, lastname, image);
     });
   }
 
   _removeChild(String userId) {
     setState(() {
-      widget._service.removeUser(userId);
+      _service.removeUser(userId);
     });
   }
 
   _createTransaction(String userId, num amount) {
     setState(() {
-      widget._service.createTransaction(userId, amount);
+      _service.createTransaction(userId, amount);
     });
   }
 
   Widget _getHomeWidget() {
     if (_familyId != null) {
       return loadWidgetAsync(
-          widget._service.getFamily(_familyId!),
+          _service.getFamily(_familyId!),
           (family) => FamilyViewWidget(
               family: family,
               addChild: _addChild,

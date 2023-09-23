@@ -1,47 +1,55 @@
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
+import 'package:shekel/service/default_service.dart';
 
 import '../model/user.dart';
 import '../model/transaction.dart' as shekel;
+import '../util/util.dart' as util;
 
-class ChildView extends StatelessWidget {
+class ChildView extends StatefulWidget {
   final User child;
-  final List<shekel.Transaction> transactions;
 
-  static const currency = '₪';
+  final currency = '₪';
   
   const ChildView(
       {super.key,
-      required this.child,
-      required this.transactions,});
+      required this.child,});
 
-  Widget _buildListView() {
-    if (transactions.isEmpty) {
-      return const Center(
-        child: Text('No transactions available.'),
-      );
-    }
+  @override
+  State<ChildView> createState() {
+    return ChildViewState();
+  }
+}
 
-    return ListView.builder(
-      shrinkWrap: true,
-      itemCount: transactions.length,
-      itemBuilder: (context, index) {
-        final transaction = transactions[index];
-        return Text('$currency${transaction.amount}');
-      },
-    );
+class ChildViewState extends State<ChildView> {
+  late Future<List<shekel.Transaction>> transactions;
+  @override
+  void initState() {
+    super.initState();
+  }
+
+  Widget _transactionTile(transaction) {
+    return Text('${widget.currency}${transaction.amount}');
   }
   
-  Widget transactionsWidget() {
+  Widget _transactionsWidget() {
+    transactions = Provider.of<DefaultService>(context, listen: false).getTransactions(widget.child.id, 10);
     return Container(
-      constraints: const BoxConstraints(maxHeight: 300, minHeight: 100),
-      decoration: BoxDecoration(
-        border: Border.all(
-          color: Colors.blue, // Border color
-          width: 2.0, // Border width
+        constraints: const BoxConstraints(maxHeight: 200, minHeight: 100),
+        decoration: BoxDecoration(
+          border: Border.all(
+            color: Colors.blue, // Border color
+            width: 2.0, // Border width
+          ),
         ),
-      ),
-      child: _buildListView()
-    );
+        child: util.loadWidgetAsync(transactions, (transactions) => 
+                                  util.listWithTitleAndButton('Transactions', 
+                                  transactions, 
+                                  _transactionTile, 
+                                  ElevatedButton(onPressed: () => {}, child: const Text('Add')))),
+
+      );
+
   }
 
   @override
@@ -53,12 +61,13 @@ class ChildView extends StatelessWidget {
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Center(
-            child: Text('$currency${child.balance}'),
+            child: Text('${widget.currency}${widget.child.balance}'),
           ),
-          transactionsWidget(),
+          _transactionsWidget(),
           IconButton(onPressed: () => Navigator.pop(context), icon: const Icon(Icons.arrow_back))
         ],
       ),
     );
   }
+  
 }

@@ -11,7 +11,7 @@ class FamilyViewWidget extends StatelessWidget {
   final Function(String userId, num amount) onCreateTransaction;
 
   static const String defaultImageUrl =
-      'https://t4.ftcdn.net/jpg/00/25/45/59/360_F_25455932_RWRLbbdaJfvfRv0yFvWW2A8r38Xv7U4O.jpg';
+      'https://lh3.googleusercontent.com/a/ACg8ocLrlGobYpUGMnINyj5dFfxCzBQPNEEOLMVBkrr0LKkaocQ=s288-c-no';
 
   const FamilyViewWidget(
       {super.key,

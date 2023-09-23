@@ -1,9 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
-import 'package:shekel/model/transaction.dart';
 
 import '../model/user.dart';
-import '../util/util.dart';
 import 'child_view.dart';
 
 class ChildListTile extends StatefulWidget {
@@ -27,99 +24,98 @@ class ChildListTile extends StatefulWidget {
 }
 
 class ChildListTileState extends State<ChildListTile> {
-  TextEditingController amountController = TextEditingController();
-
-  num amount = 0.0;
-
-  @override
-  void initState() {
-    amountController.addListener(() {
-      amount = num.tryParse(amountController.text) ?? 0.0;
-      setState(() {});
-    });
-    super.initState();
-  }
+  final TextEditingController _amountController = TextEditingController();
+  bool _canAdd = false;
 
   @override
   Widget build(BuildContext context) {
-    return ListTile(
-      title: Text(widget.child.username),
-      subtitle: Row(children: [
-        Text('${widget.currency}${widget.child.balance}'),
-        Container(
-            constraints: const BoxConstraints(maxHeight: 20, minHeight: 20),
-            decoration: BoxDecoration(
-              border: Border.all(
-                color: Colors.blue, // Border color
-                width: 2.0, // Border width
+    return Card(
+      margin: const EdgeInsets.all(8.0),
+      child: ListTile(
+        title: Text(
+          widget.child.username,
+          style: const TextStyle(
+            fontWeight: FontWeight.bold,
+            fontSize: 18.0,
+          ),
+        ),
+        subtitle: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Text(
+              '${widget.currency}${widget.child.balance.toStringAsFixed(2)}',
+              style: const TextStyle(
+                fontSize: 16.0,
               ),
             ),
-            child: SizedBox(
-              width: 32.0,
-              child: TextFormField(
-                keyboardType: TextInputType.number,
-                inputFormatters: <TextInputFormatter>[
-                  FilteringTextInputFormatter.allow(RegExp(r'[0-9]')),
-                ],
-                controller: amountController,
-                decoration: const InputDecoration(hintText: '0.0'),
-                validator: (value) {
-                  if (value != null && value.isNotEmpty && !isValidUrl(value)) {
-                    return 'Please enter a valid URL';
-                  }
-                  return null;
-                },
-              ),
-            )),
-        SizedBox(
-          width: 32.0,
-          child: IconButton(
-            onPressed: amount != 0 ? () => widget.onAddCurrencyPressed(amount) : null,
-            icon: const Icon(Icons.add, size: 16.0),
-            color: Colors.green,
-          ),
+            Row(
+              children: [
+                Expanded(
+                  child: TextField(
+                    controller: _amountController,
+                    keyboardType: TextInputType.number,
+                    onChanged: (value) {
+                      setState(() {
+                        _canAdd = double.tryParse(value) != null &&
+                            double.parse(value) != 0;
+                      });
+                    },
+                    decoration: const InputDecoration(
+                      hintText: '0.0',
+                    ),
+                  ),
+                ),
+                IconButton(
+                  icon: const Icon(Icons.add),
+                  onPressed: _canAdd
+                      ? () {
+                          // Handle adding money here
+                          double amount = double.parse(_amountController.text);
+                          setState(() {
+                            widget.child.balance += amount;
+                            _amountController.clear();
+                            _canAdd = false;
+                          });
+                        }
+                      : null,
+                ),
+                IconButton(
+                  icon: const Icon(Icons.remove),
+                  onPressed: _canAdd
+                      ? () {
+                          // Handle subtracting money here
+                          double amount = double.parse(_amountController.text);
+                          setState(() {
+                            widget.child.balance -= amount;
+                            _amountController.clear();
+                            _canAdd = false;
+                          });
+                        }
+                      : null,
+                ),
+              ],
+            ),
+          ],
         ),
-        SizedBox(
-          width: 32.0,
-          child: IconButton(
-            onPressed:
-                amount != 0 ? () => widget.onRemoveCurrencyPressed(amount) : null,
-            icon: const Icon(Icons.remove, size: 16.0),
-            color: Colors.red,
-          ),
-        ),
-      ]),
-      trailing: Row(
-        mainAxisSize: MainAxisSize.min,
-        children: [
-          SizedBox(
-            width: 22.0,
-            child: IconButton(
+        trailing: Row(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            IconButton(
+              icon: const Icon(Icons.delete),
+              onPressed: widget.onRemoveUserPressed,
+            ),
+            IconButton(
+              icon: const Icon(Icons.visibility),
               onPressed: () {
                 Navigator.push(
-                    context,
-                    MaterialPageRoute(
-                        builder: (context) => ChildView(
-                              child: widget.child,
-                              transactions: [
-                                Transaction(widget.child.id, 10),
-                                Transaction(widget.child.id, 20)
-                              ],
-                            )));
+                  context,
+                  MaterialPageRoute(
+                      builder: (context) => ChildView(child: widget.child)),
+                );
               },
-              icon: const Icon(Icons.view_agenda, size: 20.0),
-              color: Colors.blue,
             ),
-          ),
-          SizedBox(
-            width: 16.0,
-            child: IconButton(
-              onPressed: widget.onRemoveUserPressed,
-              icon: const Icon(Icons.delete, size: 20.0),
-              color: const Color.fromARGB(255, 243, 33, 93),
-            ),
-          ),
-        ],
+          ],
+        ),
       ),
     );
   }
