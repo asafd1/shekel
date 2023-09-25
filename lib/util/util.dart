@@ -1,11 +1,14 @@
 import 'package:flutter/material.dart';
 
-Widget loadWidgetAsync(Future future, Widget Function(dynamic) widgetGenerator) {
+Widget loadWidgetAsync({required future, 
+                        required Widget Function(dynamic) widgetBuilder}) {
   return FutureBuilder(
     future: future,
     builder: (context, snapshot) {
-      if (snapshot.hasData) {
-        return widgetGenerator(snapshot.data);
+      if (snapshot.connectionState == ConnectionState.waiting) {
+        return const Center(
+          child: CircularProgressIndicator(),
+        );
       } else if (snapshot.hasError) {
         return Center(
           child: Text('Error: $snapshot.error',
@@ -13,9 +16,7 @@ Widget loadWidgetAsync(Future future, Widget Function(dynamic) widgetGenerator) 
               style: const TextStyle(fontSize: 16)),
         );
       } else {
-        return const Center(
-          child: CircularProgressIndicator(),
-        );
+        return widgetBuilder(snapshot.data);
       }
     },
   );
@@ -45,10 +46,10 @@ Widget _listView(list, Widget Function(Object) tileBuilder,) {
     ); 
 } 
 
-Widget listWithTitleAndButton(final String title, 
-                                List<Object> list,
-                                Widget Function(dynamic) tileBuilder, 
-                                Widget button) {
+Widget listWithTitleAndButtons({required final String title, 
+                              required List<Object> list,
+                              required Widget Function(dynamic) tileBuilder, 
+                              List<Widget> buttons = const []}) {
   return Scaffold(
       body: 
       Column(
@@ -69,7 +70,9 @@ Widget listWithTitleAndButton(final String title,
                     color: Colors.white,
                   ),
                 ),
-                button,
+                buttons.isNotEmpty ? Row(
+                  children: buttons,
+                ) : Container()
               ],
             ),
           ),

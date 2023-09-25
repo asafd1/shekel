@@ -14,6 +14,14 @@
       },
       "oauth_client": [
         {
+          "client_id": "706057404434-s23q9lhc2g4jb1t9pjbs07difths1n8i.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.example.shekel",
+            "certificate_hash": "587132d6adf84673bc77e67287fc4a6171c19384"
+          }
+        },
+        {
           "client_id": "706057404434-4aaecbnulgm4nksp7b7keinn1s4mok26.apps.googleusercontent.com",
           "client_type": 3
         }

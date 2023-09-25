@@ -4,8 +4,6 @@ import '../model/transaction.dart' as shekel;
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_core/firebase_core.dart';
 
-import '../util/exceptions.dart';
-
 class DefaultService {
   
   late FirebaseFirestore firestore;
@@ -49,11 +47,11 @@ class DefaultService {
   }
 
   // a method to get a family
-  Future<Family> getFamily(String familyId) async {
+  Future<Family?> getFamily(String familyId) async {
     CollectionReference families = firestore.collection('families');
     DocumentSnapshot snapshot = await families.doc(familyId).get();
     if (!snapshot.exists) {
-      throw FamilyNotFoundException(familyId);
+      return Future.value(null);
     }
     Family family = Family.fromJson(snapshot.data() as Map<String, dynamic>);
     family.parents = (await getUsers(familyId)).where((user) => user.role == Role.parent).toList();
@@ -85,13 +83,13 @@ class DefaultService {
 
   _addUserToFamily(User user) async {
     var family = await getFamily(user.familyId);
-    family.addUser(user, user.role);
+    family!.addUser(user, user.role);
     updateFamily(family);
   }
 
   _removeUserFromFamily(User user) async {
     var family = await getFamily(user.familyId);
-    family.removeUser(user.id, user.role);
+    family!.removeUser(user.id, user.role);
     updateFamily(family);
   }
 
@@ -129,6 +127,16 @@ class DefaultService {
     CollectionReference users = firestore.collection('users');
     DocumentSnapshot snapshot = await users.doc(userId).get();
     return User.fromJson(snapshot.data() as Map<String, dynamic>);
+  }
+
+  // a method to get a user by username
+  Future<User?> getUserByUsername(String username) async {
+    CollectionReference users = firestore.collection('users');
+    QuerySnapshot snapshot = await users.where('username', isEqualTo: username).get();
+    if (snapshot.docs.isEmpty) {
+      return Future.value(null);      
+    }
+    return User.fromJson(snapshot.docs.first.data() as Map<String, dynamic>);
   }
 
   // a method to get all users per family
