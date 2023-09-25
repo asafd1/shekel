@@ -20,7 +20,10 @@ class ChildrenListWidget extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return util.listWithTitleAndButton('Children', children, _tileBuilder, _addChildButton(context, 'Add Child'));
+    return util.listWithTitleAndButtons(title: 'Children', 
+                                       list: children, 
+                                       tileBuilder: _tileBuilder, 
+                                       buttons: [_addChildButton(context, 'Add Child')]);
   }
 
   Widget _addChildButton(BuildContext context, String text) {
