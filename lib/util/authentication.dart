@@ -7,6 +7,15 @@ class GoogleAuth {
     scopes: <String>['email', 'profile'],
   );
 
+  static final GoogleAuth _singleton = GoogleAuth._internal();
+
+  factory GoogleAuth() {
+    return _singleton;
+  }
+
+  GoogleAuth._internal();
+
+
   Future<String> signIn() async {
     // Trigger the authentication flow
     final GoogleSignInAccount? googleUser = await _googleSignIn.signIn();
@@ -22,6 +31,14 @@ class GoogleAuth {
 
     // Once signed in, return the username
     return await _auth.signInWithCredential(credential).then((userCredential) => userCredential.user!.email!);
+  }
+
+  Future<bool> isSignedIn() {
+    return _googleSignIn.isSignedIn();
+  }
+  
+  String? getUsername() {
+    return _googleSignIn.currentUser?.email;
   }
 
   Future<void> signOut() async {

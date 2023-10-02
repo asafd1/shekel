@@ -1,26 +1,24 @@
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
+import 'package:shekel/model/family.dart';
+import 'package:shekel/service/default_service.dart';
+import 'package:shekel/widgets/app_bar.dart';
+import 'package:shekel/widgets/children_list.dart';
 
-import '../model/family.dart';
 import '../model/user.dart';
-import 'children_list.dart';
 
 class FamilyViewWidget extends StatelessWidget {
-  final Family family;
-  final Function(String username, String firstname, String lastname, String? image) addChild;
-  final Function(String userId) onRemoveChildPressed;
-  final Function(String userId, num amount) onCreateTransaction;
+  final User user;
 
   static const String defaultImageUrl =
       'https://lh3.googleusercontent.com/a/ACg8ocLrlGobYpUGMnINyj5dFfxCzBQPNEEOLMVBkrr0LKkaocQ=s288-c-no';
 
   const FamilyViewWidget(
-      {super.key,
-      required this.family,
-      required this.addChild,
-      required this.onRemoveChildPressed,
-      required this.onCreateTransaction});
+    this.user, {
+    super.key,
+  });
 
-  Widget childrenWidget(List<User> children) {
+  Widget childrenWidget(Family family) {
     return Container(
       constraints: const BoxConstraints(maxHeight: 300, minHeight: 100),
       decoration: BoxDecoration(
@@ -29,12 +27,7 @@ class FamilyViewWidget extends StatelessWidget {
           width: 2.0, // Border width
         ),
       ),
-      child: ChildrenListWidget(
-          children: children,
-          addChild: addChild,
-          onRemoveChildPressed: onRemoveChildPressed,
-          onCreateTransaction: onCreateTransaction,),
-      
+      child: ChildrenListWidget(family),
     );
   }
 
@@ -53,14 +46,32 @@ class FamilyViewWidget extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Card(
-      elevation: 30,
-      margin: const EdgeInsets.all(16.0),
-      child: Column(
+    DefaultService service = Provider.of<DefaultService>(context, listen: false);
+
+    return FutureBuilder<Family>(
+      future: service.getFamily(user.familyId!),
+      builder: (BuildContext context, AsyncSnapshot<Family> snapshot) {
+        if (snapshot.connectionState != ConnectionState.done) {
+          return const CircularProgressIndicator();
+        }
+
+        if (snapshot.hasError) {
+          throw snapshot.error!;
+        }
+        return _getFamilyView(snapshot.data!);
+      },
+    );
+  }
+
+  Widget _getFamilyView(Family family) {
+
+    return Scaffold(
+      appBar: ShekelAppBar(user: user),
+      body: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Center(
-            child: Image.network(
+              child: Image.network(
             family.imageUrl ?? defaultImageUrl,
             width: 100.0,
             height: 100.0,
@@ -79,7 +90,7 @@ class FamilyViewWidget extends StatelessWidget {
                   ),
                 ),
                 parentsWidget(family.parents),
-                childrenWidget(family.children),
+                childrenWidget(family),
               ],
             ),
           ),

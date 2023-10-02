@@ -26,8 +26,8 @@ class DefaultService {
 
 
   // a method to create a family
-  Future<Family> createFamily (String name, String? image) async {
-    var family = Family(name, image);
+  Future<Family> createFamily(String name, String? imageUrl) async {
+    var family = Family(name: name, imageUrl: imageUrl);
   
     CollectionReference families = firestore.collection('families');
     await families.doc(family.id).set(family.toJson());
@@ -47,11 +47,11 @@ class DefaultService {
   }
 
   // a method to get a family
-  Future<Family?> getFamily(String familyId) async {
+  Future<Family> getFamily(String familyId) async {
     CollectionReference families = firestore.collection('families');
     DocumentSnapshot snapshot = await families.doc(familyId).get();
     if (!snapshot.exists) {
-      return Future.value(null);
+      throw StateError('Family with ID $familyId does not exist.');
     }
     Family family = Family.fromJson(snapshot.data() as Map<String, dynamic>);
     family.parents = (await getUsers(familyId)).where((user) => user.role == Role.parent).toList();
@@ -81,30 +81,30 @@ class DefaultService {
     return snapshot.docs.map((doc) => shekel.Transaction.fromJson(doc.data() as Map<String, dynamic>)).toList();
   }
 
-  _addUserToFamily(User user) async {
-    var family = await getFamily(user.familyId);
-    family!.addUser(user, user.role);
+  _addUserToFamily(String familyId, User user) async {
+    var family = await getFamily(familyId);
+    user.familyId = familyId;
+    family.addUser(user, user.role);
+    updateUser(user);
     updateFamily(family);
   }
 
-  _removeUserFromFamily(User user) async {
-    var family = await getFamily(user.familyId);
-    family!.removeUser(user.id, user.role);
+  _removeUserFromFamily(String familyId, User user) async {
+    var family = await getFamily(familyId);
+    family.removeUser(user.id, user.role);
+    user.familyId = null;
+    updateUser(user);
     updateFamily(family);
   }
 
   // a method to create a user
-  User createUser(String familyId, 
-                  Role role, 
-                  String username, 
-                  String firstName,
-                  String lastName, 
-                  String? image) {
-    var user = User(familyId, role, username, firstName, lastName, image);
+  User createUser(User user) {
     CollectionReference users = firestore.collection('users');
     users.doc(user.id).set(user.toJson());
 
-    _addUserToFamily(user);
+    if (user.familyId != null) {
+      _addUserToFamily(user.familyId!, user);
+    }
     return user;
   }
 
@@ -112,7 +112,7 @@ class DefaultService {
   void removeUser(String userId) async {
     CollectionReference users = firestore.collection('users');
     var user = await getUser(userId);
-    _removeUserFromFamily(user);
+    _removeUserFromFamily(user.familyId!, user);
     users.doc(userId).delete();
   }
 

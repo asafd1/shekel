@@ -21,13 +21,13 @@ class Family {
     this.updatedAt,
   );
 
-  factory Family(String name, String? image) {
+  factory Family({required String name, String? imageUrl}) {
     var id = const Uuid().v4();
     var now = DateTime.now();
     return Family._(
       id,
       name,
-      image,
+      imageUrl,
       [],
       [],
       Timestamp.fromDate(now),

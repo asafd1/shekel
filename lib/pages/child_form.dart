@@ -1,19 +1,23 @@
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
+import 'package:shekel/model/family.dart';
+import 'package:shekel/model/user.dart';
+import 'package:shekel/service/default_service.dart';
 
 import '../util/util.dart';
 
-class ChildForm extends StatefulWidget {
-  final Function(String username, String firstname, String lastname, String? imageUrl) onSubmit;
+class ChildFormWidget extends StatefulWidget {
+  final Family family;
 
-  const ChildForm({super.key, 
-    required this.onSubmit,
-  });
+  const ChildFormWidget(this.family, {super.key,});
 
   @override
-  ChildFormState createState() => ChildFormState();
+  ChildFormWidgetState createState() => ChildFormWidgetState();
 }
 
-class ChildFormState extends State<ChildForm> {
+class ChildFormWidgetState extends State<ChildFormWidget> {
+  late DefaultService service;
+
   final _formKey = GlobalKey<FormState>();
   late TextEditingController _usernameController;
   late TextEditingController _firstnameController;
@@ -31,6 +35,8 @@ class ChildFormState extends State<ChildForm> {
 
   @override
   Widget build(BuildContext context) {
+    service = Provider.of<DefaultService>(context, listen: false);
+
     return Scaffold(
       body: Form(
         key: _formKey,
@@ -83,7 +89,7 @@ class ChildFormState extends State<ChildForm> {
             ElevatedButton(
               onPressed: () {
                 if (_formKey.currentState!.validate()) {
-                  widget.onSubmit(
+                  onSubmit(
                     _usernameController.text,
                     _firstnameController.text,
                     _lastnameController.text,
@@ -108,5 +114,12 @@ class ChildFormState extends State<ChildForm> {
     _lastnameController.dispose();
     _imageUrlController.dispose();
     super.dispose();
+  }
+
+  onSubmit(String username, String firstname, String lastname, String? image) {
+    setState(() {
+      User user = User(username: username, firstName: firstname, lastName: lastname, familyId: widget.family.id, image: image); 
+      service.createUser(user);
+    });
   }
 }

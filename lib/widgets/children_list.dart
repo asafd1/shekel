@@ -1,55 +1,66 @@
 import 'package:flutter/material.dart';
+import 'package:shekel/model/family.dart';
+import 'package:shekel/routes/routes.dart';
 import 'package:shekel/widgets/child_tile.dart';
 
-import '../model/user.dart';
-import '../util/util.dart' as util;
-import 'child_form.dart';
-
 class ChildrenListWidget extends StatelessWidget {
-  final List<User> children;
-  final Function(String username, String firstname, String lastname, String? image) addChild;
-  final Function(String userId) onRemoveChildPressed;
-  final Function(String userId, num amount) onCreateTransaction;
+  final Family family;
 
   const ChildrenListWidget(
-      {super.key,
-      required this.children,
-      required this.addChild,
-      required this.onRemoveChildPressed,
-      required this.onCreateTransaction,});
+    this.family,
+      {super.key,});
 
   @override
   Widget build(BuildContext context) {
-    return util.listWithTitleAndButtons(title: 'Children', 
-                                       list: children, 
-                                       tileBuilder: _tileBuilder, 
-                                       buttons: [_addChildButton(context, 'Add Child')]);
+    return Column(
+      crossAxisAlignment:
+          CrossAxisAlignment.stretch, // Stretch children horizontally
+      children: [
+        Container(
+          color: Colors.blue,
+          padding: const EdgeInsets.all(16.0),
+          child: const Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: [
+              Text(
+                'Children',
+                style: TextStyle(
+                  fontSize: 24.0,
+                  fontWeight: FontWeight.bold,
+                  color: Colors.white,
+                ),
+              ),
+            ],
+          ),
+        ),
+        _listView(family.children),
+        _addChildButton(context),
+      ],
+    );
   }
 
-  Widget _addChildButton(BuildContext context, String text) {
-    return ElevatedButton(
+  Widget _addChildButton(BuildContext context) {
+    return FloatingActionButton(
       onPressed: () {
-          Navigator.push(
-              context,
-              MaterialPageRoute(builder: (context) => ChildForm(onSubmit: addChild)),
-            );
-        },
-      child: Text(text),
+        Navigator.pushNamed(context, Routes.childForm, arguments: family);
+      },
+      child: const Text('Add Child'),
     );
   }
 
-  Widget _tileBuilder(user){
-    return ChildListTile(
-      child: user,
-      onAddCurrencyPressed: (amount) {
-        onCreateTransaction(user.id, amount);
-      },
-      onRemoveCurrencyPressed: (amount) {
-        onCreateTransaction(user.id, amount * -1);
-      },
-      onRemoveUserPressed: () {
-        onRemoveChildPressed(user.id);
-      },
+  Widget _listView(list) {
+  if (list.isEmpty) {
+    return const Center(
+      child: Text('Nothing here.'),
     );
   }
+
+  return ListView.builder(
+        shrinkWrap: true,
+        itemCount: list.length,
+        itemBuilder: (context, index) {
+          return ChildListTile(list[index]);
+        },
+    ); 
+  } 
 }

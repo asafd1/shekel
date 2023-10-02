@@ -9,7 +9,7 @@ enum Role {
 
 class User {
   String id;
-  String familyId;
+  String? familyId;
   Role role;
   String username;
   String firstName;
@@ -32,7 +32,7 @@ class User {
     this.updatedAt,
   );
 
-  factory User(familyId, role, username, firstName, lastName, image) {
+  factory User({familyId, role, username, firstName, lastName, image}) {
     var id = const Uuid().v4();
     var balance = 0;
     var now = DateTime.now();
