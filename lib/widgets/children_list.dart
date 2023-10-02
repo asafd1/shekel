@@ -42,7 +42,7 @@ class ChildrenListWidget extends StatelessWidget {
   Widget _addChildButton(BuildContext context) {
     return FloatingActionButton(
       onPressed: () {
-        Navigator.pushNamed(context, Routes.childForm, arguments: family);
+        Navigator.pushNamed(context, Routes.childForm, arguments: {"family": family});
       },
       child: const Text('Add Child'),
     );

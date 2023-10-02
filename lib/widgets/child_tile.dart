@@ -44,7 +44,7 @@ class ChildListTileState extends State<ChildListTile> {
       ),
       onTap: () {
         Navigator.pushNamed(context, Routes.transactions,
-            arguments: widget.child);
+            arguments: {"user": widget.child});
       },
       trailing: IconButton(
         icon: const Icon(Icons.delete),

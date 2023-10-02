@@ -26,9 +26,7 @@ class Routes {
       case home:
         return MaterialPageRoute(builder: (_) => const HomePageWidget());
       case login:
-        return MaterialPageRoute(builder: (_) => LoginPageWidget((p0) {
-          
-        },));
+        return MaterialPageRoute(builder: (_) => const LoginPageWidget());
       case familyView:
         return MaterialPageRoute(builder: (_) => FamilyViewWidget(valuePassed['user']));
       case familyForm:
