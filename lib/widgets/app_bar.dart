@@ -1,6 +1,7 @@
 // custom app bar with leading icon and one action
 // Compare this snippet from lib/widgets/transaction_form.dart:
 import 'package:flutter/material.dart';
+import 'package:shekel/routes/routes.dart';
 import 'package:shekel/util/authentication.dart';
 
 import '../model/user.dart';
@@ -14,17 +15,13 @@ class ShekelAppBar extends StatelessWidget implements PreferredSizeWidget {
 
   @override
   Widget build(BuildContext context) {
-    // final Reference storageReference = FirebaseStorage.instance
-    //     .ref()
-    //     .child('gs://shekel-41250.appspot.com/family.jpg');
-
     actions.add(
       IconButton(
         icon: const Icon(Icons.person),
         tooltip: 'Profile',
         onPressed: () {
-          // Handle sign out action
-          // Navigator.pop(context); // Close the bottom sheet
+          // show user profile
+          // Navigator.pushNamed(context, Routes.);
         },
       ),
     );
@@ -33,9 +30,7 @@ class ShekelAppBar extends StatelessWidget implements PreferredSizeWidget {
         icon: const Icon(Icons.logout),
         tooltip: 'Sign Out',
         onPressed: () {
-          // Handle sign out action
-          // Navigator.pop(context); // Close the bottom sheet
-          GoogleAuth().signOut();
+          GoogleAuth().signOut().then((value) => Navigator.pushNamed(context, Routes.login));
         },
       ),
     );
