@@ -89,18 +89,18 @@ class ChildFormWidgetState extends State<ChildFormWidget> {
             ElevatedButton(
               onPressed: () {
                 if (_formKey.currentState!.validate()) {
-                  onSubmit(
+                  User user = createUser(
                     _usernameController.text,
                     _firstnameController.text,
                     _lastnameController.text,
                     _imageUrlController.text.trim().isEmpty ? null : _imageUrlController.text,
                   );
-                  Navigator.pop(context);
+                  Navigator.pop(context, user);
                 }
               },
               child: const Text('Submit'),
             ),
-            IconButton(onPressed: () => Navigator.pop(context), icon: const Icon(Icons.arrow_back))
+            // IconButton(onPressed: () => Navigator.pop(context), icon: const Icon(Icons.arrow_back))
           ],
         ),
       )
@@ -116,10 +116,9 @@ class ChildFormWidgetState extends State<ChildFormWidget> {
     super.dispose();
   }
 
-  onSubmit(String username, String firstname, String lastname, String? image) {
-    setState(() {
-      User user = User(username: username, firstName: firstname, lastName: lastname, familyId: widget.family.id, image: image); 
-      service.createUser(user);
-    });
+  User createUser(String username, String firstname, String lastname, String? image) {
+    User user = User(username: username, role: Role.child, firstName: firstname, lastName: lastname, familyId: widget.family.id, image: image); 
+    service.createUser(user);
+    return user;
   }
 }

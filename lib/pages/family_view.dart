@@ -20,7 +20,8 @@ class FamilyViewWidget extends StatelessWidget {
 
   Widget childrenWidget(Family family) {
     return Container(
-      constraints: const BoxConstraints(maxHeight: 300, minHeight: 100),
+      // constraints: const BoxConstraints(maxHeight: 300, minHeight: 100),
+      height: 300,
       decoration: BoxDecoration(
         border: Border.all(
           color: Colors.blue, // Border color

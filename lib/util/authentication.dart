@@ -16,9 +16,9 @@ class GoogleAuth {
   GoogleAuth._internal();
 
 
-  Future<String> signIn() async {
+  Future<String> _signIn({bool silently = false}) async {
     // Trigger the authentication flow
-    final GoogleSignInAccount? googleUser = await _googleSignIn.signIn();
+    final GoogleSignInAccount? googleUser = silently ? await _googleSignIn.signInSilently() : await _googleSignIn.signIn();
 
     // Obtain the auth details from the request
     final GoogleSignInAuthentication? googleAuth = await googleUser?.authentication;
@@ -33,9 +33,12 @@ class GoogleAuth {
     return await _auth.signInWithCredential(credential).then((userCredential) => userCredential.user!.email!);
   }
 
+  Future<String> signIn() async {
+    return await _signIn();
+  }
+
   Future<String?> signInSilently() async {
-    GoogleSignInAccount? googleAccount = await _googleSignIn.signInSilently();
-    return googleAccount?.email;
+    return await _signIn(silently: true);
   }
   
   String? getUsername() {

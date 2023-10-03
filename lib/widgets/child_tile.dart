@@ -1,16 +1,16 @@
 import 'package:flutter/material.dart';
-import 'package:provider/provider.dart';
-import 'package:shekel/routes/routes.dart';
-import 'package:shekel/service/default_service.dart';
 
 import '../model/user.dart';
 
 class ChildListTile extends StatefulWidget {
   final User child;
   final String currency = '₪';
+  
+  final Function _removeChild;
 
   const ChildListTile(
-    this.child, {
+    this.child, 
+    this._removeChild,{
     super.key,
   });
 
@@ -19,16 +19,13 @@ class ChildListTile extends StatefulWidget {
 }
 
 class ChildListTileState extends State<ChildListTile> {
-  late DefaultService service;
 
   @override
   Widget build(BuildContext context) {
-    service = Provider.of<DefaultService>(context, listen: false);
-
     return ListTile(
-      leading: CircleAvatar(
-        backgroundImage: NetworkImage(widget.child.image ?? ''),
-      ),
+      leading: widget.child.image != null
+          ? CircleAvatar(backgroundImage: NetworkImage(widget.child.image!))
+          : const Icon(Icons.person),
       title: Text(
         widget.child.username,
         style: const TextStyle(
@@ -42,20 +39,10 @@ class ChildListTileState extends State<ChildListTile> {
           fontSize: 16.0,
         ),
       ),
-      onTap: () {
-        Navigator.pushNamed(context, Routes.transactions,
-            arguments: {"user": widget.child});
-      },
       trailing: IconButton(
         icon: const Icon(Icons.delete),
-        onPressed: () => _removeChild(widget.child.id),
+        onPressed: () => widget._removeChild(widget.child.id),
       ),
     );
-  }
-
-  _removeChild(String userId) {
-    setState(() {
-      service.removeUser(userId);
-    });
   }
 }

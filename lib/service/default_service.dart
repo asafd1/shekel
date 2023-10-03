@@ -112,7 +112,7 @@ class DefaultService {
   void removeUser(String userId) async {
     CollectionReference users = firestore.collection('users');
     var user = await getUser(userId);
-    _removeUserFromFamily(user.familyId!, user);
+    await _removeUserFromFamily(user.familyId!, user);
     users.doc(userId).delete();
   }
 
