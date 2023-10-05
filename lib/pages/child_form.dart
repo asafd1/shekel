@@ -3,8 +3,7 @@ import 'package:provider/provider.dart';
 import 'package:shekel/model/family.dart';
 import 'package:shekel/model/user.dart';
 import 'package:shekel/service/default_service.dart';
-
-import '../util/util.dart';
+import 'package:shekel/util/util.dart';
 
 class ChildFormWidget extends StatefulWidget {
   final Family family;

@@ -11,9 +11,10 @@ class TransactionsListWidget extends StatefulWidget {
   final bool readonly;
 
   const TransactionsListWidget(
-    this.childId, 
+    this.childId,
     this.setUserBalance, {
-    super.key, this.readonly = true,
+    super.key,
+    this.readonly = true,
   });
 
   @override
@@ -23,7 +24,7 @@ class TransactionsListWidget extends StatefulWidget {
 class _TransactionsListWidgetState extends State<TransactionsListWidget> {
   late DefaultService service;
   List<Transaction> transactions = [];
-  
+
   int limit = 100;
 
   @override
@@ -60,13 +61,17 @@ class _TransactionsListWidgetState extends State<TransactionsListWidget> {
       onPressed: () async {
         final input = await showDialog(
           barrierDismissible: false,
-          context: context, 
+          context: context,
           builder: (context) => const TransactionFormDialog(),
         );
         if (input == null) {
           return;
         }
-        Transaction transaction = await service.createTransaction(widget.childId, input["amount"], input["description"], input["datetime"]);
+        Transaction transaction = await service.createTransaction(
+            widget.childId,
+            input["amount"],
+            input["description"],
+            input["datetime"]);
         setState(() {
           widget.setUserBalance(transaction.amount);
         });
@@ -77,18 +82,17 @@ class _TransactionsListWidgetState extends State<TransactionsListWidget> {
 
   Widget _listView(list) {
     return FutureBuilder(
-      future: service.getTransactions(widget.childId, limit), 
-      builder: (BuildContext context, AsyncSnapshot snapshot) {
-        if (snapshot.connectionState != ConnectionState.done) {
-          return const CircularProgressIndicator();
-        }
-        if (snapshot.hasError) {
-          throw snapshot.error!;
-        }
-        
-        return _getListWidget(snapshot.data);
-      }
-    );
+        future: service.getTransactions(widget.childId, limit),
+        builder: (BuildContext context, AsyncSnapshot snapshot) {
+          if (snapshot.connectionState != ConnectionState.done) {
+            return const CircularProgressIndicator();
+          }
+          if (snapshot.hasError) {
+            throw snapshot.error!;
+          }
+
+          return _getListWidget(snapshot.data);
+        });
   }
 
   _getListWidget(List<Transaction> transactions) {
@@ -111,9 +115,9 @@ class _TransactionsListWidgetState extends State<TransactionsListWidget> {
     );
   }
 
-  _removeTransaction(Transaction transaction) {
+  _removeTransaction(Transaction transaction) async {
+    await service.removeTransaction(transaction.id);
     setState(() {
-      service.removeTransaction(transaction.id);
       widget.setUserBalance(-transaction.amount);
     });
   }

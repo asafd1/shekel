@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:shekel/model/user.dart';
 import 'package:shekel/service/default_service.dart';
+import 'package:shekel/util/util.dart';
 
 class FamilyFormWidget extends StatefulWidget {
   final User parent;
@@ -23,10 +24,6 @@ class FamilyFormWidgetState extends State<FamilyFormWidget> {
     super.initState();
     _nameController = TextEditingController(text: '');
     _imageUrlController = TextEditingController(text: '');
-  }
-
-  _isValidUrl(String url) {
-    return Uri.parse(url).isAbsolute;
   }
 
   @override
@@ -55,7 +52,7 @@ class FamilyFormWidgetState extends State<FamilyFormWidget> {
             controller: _imageUrlController,
             decoration: const InputDecoration(labelText: 'Image URL'),
             validator: (value) {
-              if (value != null && value.isNotEmpty && !_isValidUrl(value)) {
+              if (value != null && value.isNotEmpty && !isValidUrl(value)) {
                 return 'Please enter a valid URL';
               }
               return null;

@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:shekel/model/transaction.dart';
 import 'package:shekel/util/authentication.dart';
 import 'package:shekel/widgets/app_bar.dart';
 import 'package:shekel/widgets/transactions_list.dart';

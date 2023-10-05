@@ -33,15 +33,17 @@ class DefaultService {
   }
 
   // a method to remove a family
-  void removeFamily(String familyId) {
+  Future<bool> removeFamily(String familyId) async {
     CollectionReference families = firestore.collection('families');
-    families.doc(familyId).delete();
+    await families.doc(familyId).delete();
+    return Future.value(true);
   }
 
   // a method to update a family
-  void updateFamily(Family family) {
+  Future<Family> updateFamily(Family family) async {
     CollectionReference families = firestore.collection('families');
-    families.doc(family.id).update(family.toJson());
+    await families.doc(family.id).update(family.toJson());
+    return family;
   }
 
   // a method to get a family
@@ -78,15 +80,16 @@ class DefaultService {
   }
 
   // a method to remove a transaction
-  void removeTransaction(String transactionId) async {
+  Future<bool> removeTransaction(String transactionId) async {
     CollectionReference transactions = firestore.collection('transactions');
     var transaction = await getTransaction(transactionId);
-    transactions.doc(transactionId).delete();
+    await transactions.doc(transactionId).delete();
 
     // update user balance
     var user = await getUser(transaction.userId);
     user.balance -= transaction.amount;
-    updateUser(user);
+    await updateUser(user);
+    return Future.value(true);
   }
 
   Future<shekel.Transaction> getTransaction(String transactionId) async {
@@ -111,20 +114,22 @@ class DefaultService {
         .toList();
   }
 
-  _addUserToFamily(String familyId, User user) async {
+  Future<Family> _addUserToFamily(String familyId, User user) async {
     var family = await getFamily(familyId);
     user.familyId = familyId;
     family.addUser(user, user.role);
-    updateUser(user);
-    updateFamily(family);
+    await updateUser(user);
+    await updateFamily(family);
+    return family;
   }
 
-  _removeUserFromFamily(String familyId, User user) async {
+  Future<Family> _removeUserFromFamily(String familyId, User user) async {
     var family = await getFamily(familyId);
     family.removeUser(user.id, user.role);
     user.familyId = null;
-    updateUser(user);
-    updateFamily(family);
+    await updateUser(user);
+    await updateFamily(family);
+    return family;
   }
 
   // a method to create a user
@@ -139,17 +144,19 @@ class DefaultService {
   }
 
   // a method to remove a user
-  void removeUser(String userId) async {
+  Future<bool> removeUser(String userId) async {
     CollectionReference users = firestore.collection('users');
     var user = await getUser(userId);
     await _removeUserFromFamily(user.familyId!, user);
-    users.doc(userId).delete();
+    await users.doc(userId).delete();
+    return Future.value(true);
   }
 
   // a method to update a user
-  void updateUser(User user) {
+  Future<bool> updateUser(User user) async {
     CollectionReference users = firestore.collection('users');
-    users.doc(user.id).update(user.toJson());
+    await users.doc(user.id).update(user.toJson());
+    return Future.value(true);
   }
 
   // a method to get a user
