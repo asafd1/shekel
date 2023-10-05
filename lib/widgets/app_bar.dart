@@ -40,7 +40,7 @@ class ShekelAppBar extends StatelessWidget implements PreferredSizeWidget {
       // leading icon
       leading: CircleAvatar(
             backgroundColor: Colors.white,
-            child: Image.network('https://firebasestorage.googleapis.com/v0/b/shekel-41250.appspot.com/o/family.jpg?alt=media&token=771ffe74-0c38-4b2f-9d9a-ad66c6911225'),
+            child: Image.asset('assets/images/shekel.png'),
           ),
       );
   }
