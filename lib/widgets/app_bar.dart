@@ -34,6 +34,14 @@ class ShekelAppBar extends StatelessWidget implements PreferredSizeWidget {
         },
       ),
     );
+    if (Navigator.canPop(context)) {
+      actions.add(
+        IconButton(
+          icon: const Icon(Icons.arrow_back),
+          onPressed: () => Navigator.pop(context),
+        ),
+      );
+    }
     return AppBar(
       title: Text(title),
       actions: actions,

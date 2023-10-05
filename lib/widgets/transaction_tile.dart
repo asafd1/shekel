@@ -1,21 +1,16 @@
 import 'package:flutter/material.dart';
-import 'package:shekel/model/transaction.dart' as shekel;
+import 'package:shekel/model/transaction.dart';
 
 class TransactionListTile extends StatefulWidget {
-  final shekel.Transaction transaction;
-  final String currency;
-  final Function(num amount) addCurrency;
-  final Function(num amount) removeCurrency;
+  final Transaction transaction;
+  final String currency = '₪';
   
-  final bool editMode;
+  final Function _removeTransaction;
 
-  const TransactionListTile({
+  const TransactionListTile(
+    this.transaction, 
+    this._removeTransaction,{
     super.key,
-    required this.transaction,
-    this.currency = '₪',
-    required this.addCurrency,
-    required this.removeCurrency,
-    this.editMode = false,
   });
 
   @override
@@ -23,100 +18,40 @@ class TransactionListTile extends StatefulWidget {
 }
 
 class TransactionListTileState extends State<TransactionListTile> {
-  final TextEditingController _amountController = TextEditingController();
 
   @override
   Widget build(BuildContext context) {
-    return Card(
-      margin: const EdgeInsets.all(8.0),
-      child: ListTile(
-        title: Text(
-            widget.transaction.amount.toStringAsFixed(2),
-          style: const TextStyle(
-            fontWeight: FontWeight.bold,
-            fontSize: 18.0,
-          ),
+    return ListTile(
+      leading: widget.transaction.amount > 0
+          ? const Icon(Icons.add, color: Colors.green,)
+          : const Icon(Icons.remove, color: Colors.red,),
+      title: Text(
+        '${widget.currency}${widget.transaction.amount.toStringAsFixed(2)}',
+        style: const TextStyle(
+          fontWeight: FontWeight.bold,
+          fontSize: 18.0,
         ),
-        subtitle: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
+      ),
+      subtitle: Row(
           children: [
             Text(
-              '${widget.transaction.createdAt}}',
+              widget.transaction.description,
               style: const TextStyle(
                 fontSize: 16.0,
               ),
             ),
-            // Row(
-            //   children: [
-            //     Expanded(
-            //       child: TextField(
-            //         controller: _amountController,
-            //         keyboardType: TextInputType.number,
-            //         onChanged: (value) {
-            //           setState(() {
-            //             _canAdd = double.tryParse(value) != null &&
-            //                 double.parse(value) != 0;
-            //           });
-            //         },
-            //         decoration: const InputDecoration(
-            //           hintText: '0.0',
-            //         ),
-            //       ),
-            //     ),
-            //     IconButton(
-            //       icon: const Icon(Icons.add),
-            //       onPressed: _canAdd
-            //           ? () {
-            //               // Handle adding money here
-            //               double amount = double.parse(_amountController.text);
-            //               setState(() {
-            //                 widget.child.balance += amount;
-            //                 _amountController.clear();
-            //                 _canAdd = false;
-            //               });
-            //             }
-            //           : null,
-            //     ),
-            //     IconButton(
-            //       icon: const Icon(Icons.remove),
-            //       onPressed: _canAdd
-            //           ? () {
-            //               // Handle subtracting money here
-            //               double amount = double.parse(_amountController.text);
-            //               setState(() {
-            //                 widget.child.balance -= amount;
-            //                 _amountController.clear();
-            //                 _canAdd = false;
-            //               });
-            //             }
-            //           : null,
-            //     ),
-            //   ],
-            // ),
-          ],
-        ),
-        // trailing: Row(
-        //   mainAxisSize: MainAxisSize.min,
-        //   children: [
-        //     IconButton(
-        //       icon: const Icon(Icons.delete),
-        //       onPressed: widget.onRemoveUserPressed,
-        //     ),
-        //     IconButton(
-        //       icon: const Icon(Icons.visibility),
-        //       onPressed: () {
-        //         Navigator.push(
-        //           context,
-        //           MaterialPageRoute(
-        //               builder: (context) => ChildView(child: widget.child, 
-        //                                               addCurrency: widget.onAddCurrencyPressed,
-        //                                               removeCurrency: widget.onRemoveCurrencyPressed,)
-        //           )
-        //         );
-        //       },
-        //     ),
-        //   ],
-        // ),
+            const SizedBox(width: 10.0),
+            Text(
+              widget.transaction.createdAt.toString(),
+              style: const TextStyle(
+                fontSize: 12.0,
+              ),
+            ),
+          ]
+      ),
+      trailing: IconButton(
+        icon: const Icon(Icons.delete),
+        onPressed: () => widget._removeTransaction(widget.transaction),
       ),
     );
   }

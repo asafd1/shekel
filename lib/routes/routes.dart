@@ -5,7 +5,6 @@ import 'package:shekel/pages/family_form.dart';
 import 'package:shekel/pages/family_view.dart';
 import 'package:shekel/pages/home_page.dart';
 import 'package:shekel/pages/login.dart';
-import 'package:shekel/pages/transactions.dart';
 
 class Routes {
   static const String home = '/';
@@ -35,8 +34,6 @@ class Routes {
         return MaterialPageRoute(builder: (_) => ChildViewWidget(valuePassed['user']));
       case childForm:
         return MaterialPageRoute(builder: (_) => ChildFormWidget(valuePassed['family']));
-      case transactions:
-        return MaterialPageRoute(builder: (_) => TransactionsWidget(valuePassed['user']));
       default:
           throw FlutterError('No route defined for ${settings.name}');
     }

@@ -1,22 +1,30 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:uuid/uuid.dart';
 
 class Transaction {
   late String id;
   String userId;
   num amount;
+  String description;
   late DateTime createdAt;
 
   Transaction._(
-    this.id, 
-    this.userId, 
-    this.amount, 
-    this.createdAt, 
+    this.id,
+    this.userId,
+    this.amount,
+    this.description,
+    this.createdAt,
   );
 
-  factory Transaction(String userId, num amount) {
+  factory Transaction({
+    required userId,
+    required amount,
+    required description,
+    DateTime? datetime,
+  }) {
     var id = const Uuid().v4();
-    var now = DateTime.now();
-    return Transaction._(id, userId, amount, now);
+    datetime ??= DateTime.now();
+    return Transaction._(id, userId, amount, description, datetime);
   }
 
   // create factory method to convert json to object of this class
@@ -25,7 +33,8 @@ class Transaction {
       json['id'],
       json['userId'],
       json['amount'],
-      json['createdAt'],
+      json['description'],
+      json['createdAt'].toDate(),
     );
   }
 
@@ -34,6 +43,7 @@ class Transaction {
         "id": id,
         "userId": userId,
         "amount": amount,
-        "created_at": createdAt,
+        "description": description,
+        "createdAt": Timestamp.fromDate(createdAt),
       };
 }

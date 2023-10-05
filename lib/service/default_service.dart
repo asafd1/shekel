@@ -5,33 +5,31 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_core/firebase_core.dart';
 
 class DefaultService {
-  
   late FirebaseFirestore firestore;
-  
+
   DefaultService(FirebaseApp app) {
     firestore = FirebaseFirestore.instanceFor(app: app);
   }
-    
-    // // Listen for changes to the data.
-    // myRef.snapshots().listen((snapshot) {
-    //   // Do something with the data.
-    //   for (DocumentSnapshot doc in snapshot.docs) {
-    //     print(doc.data());
-    //   }
-    // });
+
+  // // Listen for changes to the data.
+  // myRef.snapshots().listen((snapshot) {
+  //   // Do something with the data.
+  //   for (DocumentSnapshot doc in snapshot.docs) {
+  //     print(doc.data());
+  //   }
+  // });
 
   Future<Map<String, dynamic>> docToJson(DocumentReference<Object?> doc) async {
     return (await doc.get()).data() as Map<String, dynamic>;
   }
 
-
   // a method to create a family
   Future<Family> createFamily(String name, String? imageUrl) async {
     var family = Family(name: name, imageUrl: imageUrl);
-  
+
     CollectionReference families = firestore.collection('families');
     await families.doc(family.id).set(family.toJson());
-    return family;   
+    return family;
   }
 
   // a method to remove a family
@@ -54,31 +52,63 @@ class DefaultService {
       throw StateError('Family with ID $familyId does not exist.');
     }
     Family family = Family.fromJson(snapshot.data() as Map<String, dynamic>);
-    family.parents = (await getUsers(familyId)).where((user) => user.role == Role.parent).toList();
-    family.children = (await getUsers(familyId)).where((user) => user.role == Role.child).toList();
+    family.parents = (await getUsers(familyId))
+        .where((user) => user.role == Role.parent)
+        .toList();
+    family.children = (await getUsers(familyId))
+        .where((user) => user.role == Role.child)
+        .toList();
     return family;
   }
 
   // a method to create a transaction
-  Future<(shekel.Transaction, num)> createTransaction(String userId, num amount) async {
-    var transaction = shekel.Transaction(userId, amount);
-  
+  Future<shekel.Transaction> createTransaction(
+      String userId, num amount, String description, DateTime datetime) async {
+    var transaction = shekel.Transaction(userId: userId, amount: amount, description: description, datetime: datetime);
+
     CollectionReference transactions = firestore.collection('transactions');
     transactions.doc(transaction.id).set(transaction.toJson());
-    
+
     // update user balance
     var user = await getUser(userId);
     user.balance += amount;
     updateUser(user);
 
-    return (transaction, user.balance);
+    return transaction;
   }
-  
-  // a method to get ordered last X transactions per user
-  Future<List<shekel.Transaction>> getTransactions(String userId, int limit) async {
+
+  // a method to remove a transaction
+  void removeTransaction(String transactionId) async {
     CollectionReference transactions = firestore.collection('transactions');
-    QuerySnapshot snapshot = await transactions.where('userId', isEqualTo: userId).limit(limit).orderBy('createdAt').get();
-    return snapshot.docs.map((doc) => shekel.Transaction.fromJson(doc.data() as Map<String, dynamic>)).toList();
+    var transaction = await getTransaction(transactionId);
+    transactions.doc(transactionId).delete();
+
+    // update user balance
+    var user = await getUser(transaction.userId);
+    user.balance -= transaction.amount;
+    updateUser(user);
+  }
+
+  Future<shekel.Transaction> getTransaction(String transactionId) async {
+    CollectionReference transactions = firestore.collection('transactions');
+    DocumentSnapshot snapshot = await transactions.doc(transactionId).get();
+    return shekel.Transaction.fromJson(snapshot.data() as Map<String, dynamic>);
+  }
+
+  // a method to get ordered last X transactions per user
+  Future<List<shekel.Transaction>> getTransactions(
+      String userId, int limit) async {
+    CollectionReference transactions = firestore.collection('transactions');
+    // get all transactions by familyId and userId
+    QuerySnapshot snapshot = await transactions
+    .where('userId', isEqualTo: userId)
+    .limit(limit)
+    .orderBy('createdAt', descending: true)
+    .get();
+    return snapshot.docs
+        .map((doc) =>
+            shekel.Transaction.fromJson(doc.data() as Map<String, dynamic>))
+        .toList();
   }
 
   _addUserToFamily(String familyId, User user) async {
@@ -132,9 +162,10 @@ class DefaultService {
   // a method to get a user by username
   Future<User?> getUserByUsername(String username) async {
     CollectionReference users = firestore.collection('users');
-    QuerySnapshot snapshot = await users.where('username', isEqualTo: username).get();
+    QuerySnapshot snapshot =
+        await users.where('username', isEqualTo: username).get();
     if (snapshot.docs.isEmpty) {
-      return Future.value(null);      
+      return Future.value(null);
     }
     return User.fromJson(snapshot.docs.first.data() as Map<String, dynamic>);
   }
@@ -142,7 +173,10 @@ class DefaultService {
   // a method to get all users per family
   Future<List<User>> getUsers(String familyId) async {
     CollectionReference users = firestore.collection('users');
-    QuerySnapshot snapshot = await users.where('familyId', isEqualTo: familyId).get();
-    return snapshot.docs.map((doc) => User.fromJson(doc.data() as Map<String, dynamic>)).toList();
+    QuerySnapshot snapshot =
+        await users.where('familyId', isEqualTo: familyId).get();
+    return snapshot.docs
+        .map((doc) => User.fromJson(doc.data() as Map<String, dynamic>))
+        .toList();
   }
 }
