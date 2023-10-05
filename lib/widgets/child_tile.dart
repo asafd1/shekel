@@ -28,7 +28,7 @@ class ChildListTileState extends State<ChildListTile> {
           ? CircleAvatar(backgroundImage: NetworkImage(widget.child.image!))
           : const Icon(Icons.person),
       title: Text(
-        widget.child.username,
+        widget.child.firstName,
         style: const TextStyle(
           fontWeight: FontWeight.bold,
           fontSize: 18.0,

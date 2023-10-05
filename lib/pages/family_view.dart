@@ -4,6 +4,7 @@ import 'package:shekel/model/family.dart';
 import 'package:shekel/service/default_service.dart';
 import 'package:shekel/widgets/app_bar.dart';
 import 'package:shekel/widgets/children_list.dart';
+import 'package:shekel/widgets/end_drawer.dart';
 
 import '../model/user.dart';
 
@@ -67,6 +68,7 @@ class FamilyViewWidget extends StatelessWidget {
   Widget _getFamilyView(Family family) {
 
     return Scaffold(
+      endDrawer: ShekelDrawer(user),
       appBar: ShekelAppBar(user: user),
       body: Column(
         crossAxisAlignment: CrossAxisAlignment.start,

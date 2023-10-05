@@ -1,8 +1,6 @@
 // custom app bar with leading icon and one action
 // Compare this snippet from lib/widgets/transaction_form.dart:
 import 'package:flutter/material.dart';
-import 'package:shekel/routes/routes.dart';
-import 'package:shekel/util/authentication.dart';
 
 import '../model/user.dart';
 
@@ -20,17 +18,7 @@ class ShekelAppBar extends StatelessWidget implements PreferredSizeWidget {
         icon: const Icon(Icons.person),
         tooltip: 'Profile',
         onPressed: () {
-          // show user profile
-          // Navigator.pushNamed(context, Routes.);
-        },
-      ),
-    );
-    actions.add(
-      IconButton(
-        icon: const Icon(Icons.logout),
-        tooltip: 'Sign Out',
-        onPressed: () {
-          GoogleAuth().signOut().then((value) => Navigator.pushNamed(context, Routes.login));
+          Scaffold.of(context).openEndDrawer();
         },
       ),
     );

@@ -4,6 +4,7 @@ import 'package:shekel/model/family.dart';
 import 'package:shekel/model/user.dart';
 import 'package:shekel/service/default_service.dart';
 import 'package:shekel/util/util.dart';
+import 'package:shekel/widgets/app_bar.dart';
 
 class ChildFormWidget extends StatefulWidget {
   final Family family;
@@ -37,6 +38,7 @@ class ChildFormWidgetState extends State<ChildFormWidget> {
     service = Provider.of<DefaultService>(context, listen: false);
 
     return Scaffold(
+      appBar: ShekelAppBar(),
       body: Form(
         key: _formKey,
         child: Column(
