@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:shekel/routes/routes.dart';
 import 'package:shekel/util/authentication.dart';
-import 'package:shekel/widgets/app_bar.dart';
+import 'package:shekel/widgets/scaffold.dart';
 
 class LoginPageWidget extends StatefulWidget {
   const LoginPageWidget({super.key});
@@ -15,9 +15,8 @@ class _LoginPageWidgetState extends State<LoginPageWidget> {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: ShekelAppBar(),
-      body: Center(
+    return ShekelScaffold(
+      Center(
         child: !_inProgress ? 
           ElevatedButton(
             onPressed: () {

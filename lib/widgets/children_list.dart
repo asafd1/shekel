@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
-import 'package:provider/provider.dart';
 import 'package:shekel/model/family.dart';
 import 'package:shekel/model/user.dart';
 import 'package:shekel/routes/routes.dart';
 import 'package:shekel/service/default_service.dart';
+import 'package:shekel/util/app_state.dart';
 import 'package:shekel/widgets/child_tile.dart';
 
 class ChildrenListWidget extends StatefulWidget {
@@ -23,7 +23,7 @@ class _ChildrenListWidgetState extends State<ChildrenListWidget> {
 
   @override
   Widget build(BuildContext context) {
-    service = Provider.of<DefaultService>(context, listen: false);
+    service = AppState.service(context);
 
     return Column(
       children: [
@@ -33,9 +33,9 @@ class _ChildrenListWidgetState extends State<ChildrenListWidget> {
           child: Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
-              Text(
-                '${widget.family.children.length} Children',
-                style: const TextStyle(
+              const Text(
+                'Children',
+                style: TextStyle(
                   fontSize: 24.0,
                   fontWeight: FontWeight.bold,
                   color: Colors.white,

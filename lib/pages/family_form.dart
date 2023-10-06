@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
-import 'package:provider/provider.dart';
 import 'package:shekel/model/user.dart';
 import 'package:shekel/service/default_service.dart';
+import 'package:shekel/util/app_state.dart';
 import 'package:shekel/util/util.dart';
 
 class FamilyFormWidget extends StatefulWidget {
@@ -28,7 +28,7 @@ class FamilyFormWidgetState extends State<FamilyFormWidget> {
 
   @override
   Widget build(BuildContext context) {
-    _service = Provider.of<DefaultService>(context, listen: false);
+    _service = AppState.service(context);
 
     return Scaffold(
         body: Form(

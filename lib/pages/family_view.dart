@@ -1,10 +1,9 @@
 import 'package:flutter/material.dart';
-import 'package:provider/provider.dart';
 import 'package:shekel/model/family.dart';
 import 'package:shekel/service/default_service.dart';
-import 'package:shekel/widgets/app_bar.dart';
+import 'package:shekel/util/app_state.dart';
 import 'package:shekel/widgets/children_list.dart';
-import 'package:shekel/widgets/end_drawer.dart';
+import 'package:shekel/widgets/scaffold.dart';
 
 import '../model/user.dart';
 
@@ -24,10 +23,10 @@ class FamilyViewWidget extends StatelessWidget {
       // constraints: const BoxConstraints(maxHeight: 300, minHeight: 100),
       height: 300,
       decoration: BoxDecoration(
-        border: Border.all(
-          color: Colors.blue, // Border color
-          width: 2.0, // Border width
-        ),
+        // border: Border.all(
+        //   color: Colors.blue, // Border color
+        //   width: 2.0, // Border width
+        // ),
       ),
       child: ChildrenListWidget(family),
     );
@@ -48,7 +47,7 @@ class FamilyViewWidget extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    DefaultService service = Provider.of<DefaultService>(context, listen: false);
+    DefaultService service = AppState.service(context);
 
     return FutureBuilder<Family>(
       future: service.getFamily(user.familyId!),
@@ -66,37 +65,45 @@ class FamilyViewWidget extends StatelessWidget {
   }
 
   Widget _getFamilyView(Family family) {
-
-    return Scaffold(
-      endDrawer: ShekelDrawer(user),
-      appBar: ShekelAppBar(user: user),
-      body: Column(
+    return ShekelScaffold(
+      Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Center(
-              child: Image.network(
-            family.imageUrl ?? defaultImageUrl,
-            width: 100.0,
-            height: 100.0,
-            fit: BoxFit.cover,
-          )),
-          Padding(
-            padding: const EdgeInsets.all(16.0),
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Text(
-                  '${family.name} Family',
-                  style: const TextStyle(
-                    fontSize: 18.0,
-                    fontWeight: FontWeight.bold,
+          Row(
+            children: [
+              Center(
+                child: CircleAvatar(
+                  radius: 50,
+                  child: ClipOval(
+                    child: Image.network(
+                      family.imageUrl ?? defaultImageUrl,
+                      width: 100.0,
+                      height: 100.0,
+                      fit: BoxFit.cover,
+                    ),
                   ),
                 ),
-                parentsWidget(family.parents),
-                childrenWidget(family),
-              ],
-            ),
+              ),
+              Padding(
+                padding: const EdgeInsets.all(16.0),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(
+                      '${family.name} Family',
+                      style: const TextStyle(
+                        fontSize: 18.0,
+                        fontWeight: FontWeight.bold,
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+            ],
           ),
+          // parentsWidget(family.parents),
+          const SizedBox(height: 5,),
+          childrenWidget(family),
         ],
       ),
     );

@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
-import 'package:shekel/util/authentication.dart';
-import 'package:shekel/widgets/app_bar.dart';
+import 'package:intl/intl.dart';
+import 'package:shekel/util/app_state.dart';
+import 'package:shekel/widgets/scaffold.dart';
 import 'package:shekel/widgets/transactions_list.dart';
 
 import '../model/user.dart';
@@ -22,9 +23,8 @@ class _ChildViewWidgetState extends State<ChildViewWidget> {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: ShekelAppBar(),
-      body: Column(children: [
+    return ShekelScaffold(
+      Column(children: [
         Column(
           mainAxisAlignment: MainAxisAlignment.start,
           children: [
@@ -44,7 +44,7 @@ class _ChildViewWidgetState extends State<ChildViewWidget> {
             ),
             // SizedBox(width: 10.0),
             Text(
-              '${widget.child.balance} $currency',
+              '${NumberFormat('#,###').format(widget.child.balance)} $currency',
               style: const TextStyle(
                 fontSize: 24.0,
                 fontWeight: FontWeight.bold,
@@ -53,8 +53,7 @@ class _ChildViewWidgetState extends State<ChildViewWidget> {
             ),
           ],
         ),
-        // use child role to establish readonly
-        TransactionsListWidget(widget.child.id, _updateUserBalance, readonly: widget.child.username == GoogleAuth().getUsername()),
+        TransactionsListWidget(widget.child.id, _updateUserBalance, readonly: AppState.getSignedInUser(context)!.role != Role.parent),
       ]),
     );
   }

@@ -4,19 +4,24 @@ import 'package:shekel/routes/routes.dart';
 import 'package:shekel/util/authentication.dart';
 
 class ShekelDrawer extends StatelessWidget {
-  final User user;
+  final User? user;
   const ShekelDrawer(this.user, {Key? key}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
+    if (user == null) {
+      return const Drawer(
+        child: Text('No user'),
+      );
+    }
     return Drawer(
       child: Column(
         children: [
           UserAccountsDrawerHeader(
-            accountName: Text(user.firstName),
-            accountEmail: Text(user.username),
+            accountName: Text(user!.firstName),
+            accountEmail: Text(user!.username),
             currentAccountPicture: CircleAvatar(
-              backgroundImage: NetworkImage(user.image ?? ''),
+              backgroundImage: NetworkImage(user!.image ?? ''),
             ),
           ),
           const Divider(),

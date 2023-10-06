@@ -1,11 +1,11 @@
 import 'package:flutter/material.dart';
-import 'package:provider/provider.dart';
 import 'package:shekel/model/user.dart';
 import 'package:shekel/pages/child_view.dart';
 import 'package:shekel/pages/family_form.dart';
 import 'package:shekel/pages/family_view.dart';
 import 'package:shekel/pages/login.dart';
 import 'package:shekel/service/default_service.dart';
+import 'package:shekel/util/app_state.dart';
 import 'package:shekel/util/authentication.dart';
 
 class HomePageWidget extends StatefulWidget {  
@@ -26,7 +26,7 @@ class _HomePageWidgetState extends State<HomePageWidget> {
 
   @override
   Widget build(BuildContext context) {
-    DefaultService service = Provider.of<DefaultService>(context, listen: false);
+    DefaultService service = AppState.service(context);
 
     return FutureBuilder(
       future: _googleAuth.signInSilently(),
@@ -62,6 +62,7 @@ class _HomePageWidgetState extends State<HomePageWidget> {
         
         if (snapshot.hasData) {
           User user = snapshot.data;
+          AppState.setSignedInUser(context, user);
           return _childOrFamilyView(user);
         } else {
           User user = User(username: username, 

@@ -5,11 +5,11 @@ import 'package:flutter/material.dart';
 import '../model/user.dart';
 
 class ShekelAppBar extends StatelessWidget implements PreferredSizeWidget {
-  final String title = 'Shekel';
+  final String title = 'shekel';
   final List<Widget> actions = <Widget>[];
   final User? user;
 
-  ShekelAppBar({super.key, this.user});
+  ShekelAppBar(this.user, {super.key,});
 
   @override
   Widget build(BuildContext context) {
@@ -31,7 +31,15 @@ class ShekelAppBar extends StatelessWidget implements PreferredSizeWidget {
       );
     }
     return AppBar(
-      title: Text(title),
+      title: Text(
+        title, 
+        style: const TextStyle(
+          color: Colors.blueAccent,
+          // fontWeight: FontWeight.bold,
+          fontFamily: 'OpenSans',
+          fontSize: 18.0,
+        ),
+      ),
       actions: actions,
       // leading icon
       leading: CircleAvatar(

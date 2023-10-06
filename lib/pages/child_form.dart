@@ -1,10 +1,10 @@
 import 'package:flutter/material.dart';
-import 'package:provider/provider.dart';
 import 'package:shekel/model/family.dart';
 import 'package:shekel/model/user.dart';
 import 'package:shekel/service/default_service.dart';
+import 'package:shekel/util/app_state.dart';
 import 'package:shekel/util/util.dart';
-import 'package:shekel/widgets/app_bar.dart';
+import 'package:shekel/widgets/scaffold.dart';
 
 class ChildFormWidget extends StatefulWidget {
   final Family family;
@@ -35,11 +35,10 @@ class ChildFormWidgetState extends State<ChildFormWidget> {
 
   @override
   Widget build(BuildContext context) {
-    service = Provider.of<DefaultService>(context, listen: false);
+    service = AppState.service(context);
 
-    return Scaffold(
-      appBar: ShekelAppBar(),
-      body: Form(
+    return ShekelScaffold(
+      Form(
         key: _formKey,
         child: Column(
           children: [

@@ -1,6 +1,7 @@
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+import 'package:shekel/util/app_state.dart';
 import 'firebase_options.dart';
 
 import 'package:shekel/service/default_service.dart';
@@ -13,7 +14,10 @@ Future<void> main() async {
 
   // var sharedPreferences = await SharedPreferences.getInstance();
   runApp(Provider(
-      create: (context) => DefaultService(app), child: const AppMain()));
+    create: (context) => AppState(service: DefaultService(app)),
+    child: const AppMain(),
+    )
+  );
 }
 
 class AppMain extends StatelessWidget {
@@ -22,6 +26,7 @@ class AppMain extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
+      debugShowCheckedModeBanner: false,
       theme: ThemeData(
         // scaffoldBackgroundColor: const Color.white[50],
         colorScheme: ColorScheme.fromSeed(seedColor: Colors.deepPurple),

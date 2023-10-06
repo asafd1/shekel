@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
-import 'package:provider/provider.dart';
 import 'package:shekel/model/transaction.dart';
 import 'package:shekel/service/default_service.dart';
+import 'package:shekel/util/app_state.dart';
 import 'package:shekel/widgets/transaction_form_dialog.dart';
 import 'package:shekel/widgets/transaction_tile.dart';
 
@@ -29,7 +29,7 @@ class _TransactionsListWidgetState extends State<TransactionsListWidget> {
 
   @override
   Widget build(BuildContext context) {
-    service = Provider.of<DefaultService>(context, listen: false);
+    service = AppState.service(context);
 
     return Column(
       children: [
@@ -109,7 +109,8 @@ class _TransactionsListWidgetState extends State<TransactionsListWidget> {
         shrinkWrap: true,
         itemCount: transactions.length,
         itemBuilder: (context, index) {
-          return TransactionListTile(transactions[index], _removeTransaction);
+          return TransactionListTile(transactions[index], widget.readonly ? null : _removeTransaction,
+              );
         },
       ),
     );
