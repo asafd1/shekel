@@ -7,17 +7,17 @@
   "client": [
     {
       "client_info": {
-        "mobilesdk_app_id": "1:706057404434:android:7041f5c4f0d642374618cb",
+        "mobilesdk_app_id": "1:706057404434:android:258ea8269c2ac64f4618cb",
         "android_client_info": {
-          "package_name": "com.example.shekel"
+          "package_name": "com.asafdavid.shekel"
         }
       },
       "oauth_client": [
         {
-          "client_id": "706057404434-pgmqqnj7miktbbegaa5o0badmumldanm.apps.googleusercontent.com",
+          "client_id": "706057404434-7en4a96fedq92ft40lrg0sr18jnmeeru.apps.googleusercontent.com",
           "client_type": 1,
           "android_info": {
-            "package_name": "com.example.shekel",
+            "package_name": "com.asafdavid.shekel",
             "certificate_hash": "587132d6adf84673bc77e67287fc4a6171c19384"
           }
         },
@@ -28,7 +28,7 @@
       ],
       "api_key": [
         {
-          "current_key": "AIzaSyADO_wUITZsJQf6pweD2dVKuCWbjvhGPtM"
+          "current_key": "AIzaSyD_ohZMbWmVFBeKJfhTB29mN4P4HcNocCw"
         }
       ],
       "services": {
@@ -42,7 +42,7 @@
               "client_id": "706057404434-o37t3g59eodvfbr6kqc6banpe9ue3i20.apps.googleusercontent.com",
               "client_type": 2,
               "ios_info": {
-                "bundle_id": "com.example.shekel"
+                "bundle_id": "com.asafdavid.shekel"
               }
             }
           ]
