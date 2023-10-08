@@ -19,15 +19,8 @@ class FamilyViewWidget extends StatelessWidget {
   });
 
   Widget childrenWidget(Family family) {
-    return Container(
-      // constraints: const BoxConstraints(maxHeight: 300, minHeight: 100),
+    return SizedBox(
       height: 300,
-      decoration: BoxDecoration(
-        // border: Border.all(
-        //   color: Colors.blue, // Border color
-        //   width: 2.0, // Border width
-        // ),
-      ),
       child: ChildrenListWidget(family),
     );
   }
@@ -49,14 +42,14 @@ class FamilyViewWidget extends StatelessWidget {
   Widget build(BuildContext context) {
     DefaultService service = AppState.service(context);
 
-    return FutureBuilder<Family>(
+    return FutureBuilder<Family?>(
       future: service.getFamily(user.familyId!),
-      builder: (BuildContext context, AsyncSnapshot<Family> snapshot) {
+      builder: (BuildContext context, AsyncSnapshot<Family?> snapshot) {
         if (snapshot.connectionState != ConnectionState.done) {
           return const CircularProgressIndicator();
         }
 
-        if (snapshot.hasError) {
+        if (snapshot.hasError || snapshot.data == null) {
           throw snapshot.error!;
         }
         return _getFamilyView(snapshot.data!);

@@ -117,8 +117,6 @@ class ChildFormWidgetState extends State<ChildFormWidget> {
   }
 
   User createUser(String username, String firstname, String lastname, String? image) {
-    User user = User(username: username, role: Role.child, firstName: firstname, lastName: lastname, familyId: widget.family.id, image: image); 
-    service.createUser(user);
-    return user;
+    return service.createUser(username: username, id: '1', role: Role.child, firstName: firstname, lastName: lastname, familyId: widget.family.id, image: image);
   }
 }

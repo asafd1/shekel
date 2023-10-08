@@ -1,8 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:shekel/model/user.dart';
+import 'package:shekel/routes/routes.dart';
 import 'package:shekel/service/default_service.dart';
 import 'package:shekel/util/app_state.dart';
 import 'package:shekel/util/util.dart';
+import 'package:shekel/widgets/scaffold.dart';
 
 class FamilyFormWidget extends StatefulWidget {
   final User parent;
@@ -30,8 +32,8 @@ class FamilyFormWidgetState extends State<FamilyFormWidget> {
   Widget build(BuildContext context) {
     _service = AppState.service(context);
 
-    return Scaffold(
-        body: Form(
+    return ShekelScaffold(
+      Form(
       key: _formKey,
       child: Column(
         children: [
@@ -86,8 +88,10 @@ class FamilyFormWidgetState extends State<FamilyFormWidget> {
   void _onSubmit(String familyName, String? familyImage) {
     _service.createFamily(familyName, familyImage).then((family) {
       widget.parent.familyId = family.id;
+      widget.parent.role = Role.parent;
       _service.updateUser(widget.parent);
-      Navigator.pop(context, family);
+      Navigator.pushNamed(context, Routes.familyView, 
+                          arguments: {"user": widget.parent});
     });
   }
 }

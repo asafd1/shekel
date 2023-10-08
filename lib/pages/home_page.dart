@@ -7,6 +7,7 @@ import 'package:shekel/pages/login.dart';
 import 'package:shekel/service/default_service.dart';
 import 'package:shekel/util/app_state.dart';
 import 'package:shekel/util/authentication.dart';
+import 'package:shekel/util/oauth_user.dart';
 
 class HomePageWidget extends StatefulWidget {  
   const HomePageWidget({super.key});
@@ -28,9 +29,9 @@ class _HomePageWidgetState extends State<HomePageWidget> {
   Widget build(BuildContext context) {
     DefaultService service = AppState.service(context);
 
-    return FutureBuilder(
+    return FutureBuilder<OAuthUser?>(
       future: _googleAuth.signInSilently(),
-      builder: (BuildContext context, AsyncSnapshot<String?> snapshot) {
+      builder: (BuildContext context, AsyncSnapshot<OAuthUser?> snapshot) {
         if (snapshot.connectionState != ConnectionState.done) {
           return const CircularProgressIndicator();
         }
@@ -38,20 +39,19 @@ class _HomePageWidgetState extends State<HomePageWidget> {
           throw snapshot.error!;
         }
 
-        if (snapshot.data == null) {
+        OAuthUser? signedInUser = snapshot.data;
+        if (signedInUser == null) {
           return const LoginPageWidget();
         }
 
-        return _getHomeView(service);
+        return _getHomeView(service, signedInUser);
       },
     );
   }
 
- Widget _getHomeView(DefaultService service) {
-    username = _googleAuth.getUsername();
-
+ Widget _getHomeView(DefaultService service, OAuthUser signedInUser) {
     return FutureBuilder(
-      future: service.getUserByUsername(username!), 
+      future: service.getUser(signedInUser.id),
       builder: (BuildContext context, AsyncSnapshot snapshot) {
         if (snapshot.connectionState != ConnectionState.done) {
           return const CircularProgressIndicator();
@@ -60,25 +60,24 @@ class _HomePageWidgetState extends State<HomePageWidget> {
           throw snapshot.error!;
         }
         
-        if (snapshot.hasData) {
-          User user = snapshot.data;
-          AppState.setSignedInUser(context, user);
-          return _childOrFamilyView(user);
-        } else {
-          User user = User(username: username, 
-                           role: Role.parent);
-          service.createUser(user);
+        User? user = snapshot.data;
+        user ??= service.createUser(id: signedInUser.id,
+                                      username: signedInUser.username,
+                                      firstName: signedInUser.firstName,
+                                      lastName: signedInUser.lastName,
+                                      image: signedInUser.image,
+                                      role: Role.parent);
+        AppState.setSignedInUser(context, user);
+        if (user.familyId == null) {
           return FamilyFormWidget(user);
+        }
+        
+        if (user.role == Role.child) {
+          return ChildViewWidget(user);
+        } else {
+          return FamilyViewWidget(user);
         }
       }
     );
-  }
-
-  Widget _childOrFamilyView(User user) {
-    if (user.role == Role.child) {
-      return ChildViewWidget(user);
-    } else {
-      return FamilyViewWidget(user);
-    }
   }
 }

@@ -1,5 +1,6 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:google_sign_in/google_sign_in.dart';
+import 'package:shekel/util/oauth_user.dart';
 
 class GoogleAuth {
   final FirebaseAuth _auth = FirebaseAuth.instance;
@@ -16,7 +17,7 @@ class GoogleAuth {
   GoogleAuth._internal();
 
 
-  Future<String> _signIn({bool silently = false}) async {
+  Future<OAuthUser> _signIn({bool silently = false}) async {
     // Trigger the authentication flow
     final GoogleSignInAccount? googleUser = silently ? await _googleSignIn.signInSilently() : await _googleSignIn.signIn();
 
@@ -30,14 +31,14 @@ class GoogleAuth {
     );
 
     // Once signed in, return the username
-    return await _auth.signInWithCredential(credential).then((userCredential) => userCredential.user!.email!);
+    return await _auth.signInWithCredential(credential).then((userCredential) => OAuthUser(userCredential.user!));
   }
 
-  Future<String> signIn() async {
+  Future<OAuthUser> signIn() async {
     return await _signIn();
   }
 
-  Future<String?> signInSilently() async {
+  Future<OAuthUser?> signInSilently() async {
     return await _signIn(silently: true);
   }
   

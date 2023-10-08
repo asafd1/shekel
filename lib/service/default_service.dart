@@ -47,11 +47,11 @@ class DefaultService {
   }
 
   // a method to get a family
-  Future<Family> getFamily(String familyId) async {
+  Future<Family?> getFamily(String familyId) async {
     CollectionReference families = firestore.collection('families');
     DocumentSnapshot snapshot = await families.doc(familyId).get();
     if (!snapshot.exists) {
-      throw StateError('Family with ID $familyId does not exist.');
+      return Future.value(null);
     }
     Family family = Family.fromJson(snapshot.data() as Map<String, dynamic>);
     family.parents = (await getUsers(familyId))
@@ -72,7 +72,10 @@ class DefaultService {
     transactions.doc(transaction.id).set(transaction.toJson());
 
     // update user balance
-    var user = await getUser(userId);
+    User? user = await getUser(userId);
+    if (user == null) {
+      return Future.error('User with ID $userId does not exist.');
+    }
     user.balance += amount;
     updateUser(user);
 
@@ -82,19 +85,28 @@ class DefaultService {
   // a method to remove a transaction
   Future<bool> removeTransaction(String transactionId) async {
     CollectionReference transactions = firestore.collection('transactions');
-    var transaction = await getTransaction(transactionId);
+    shekel.Transaction? transaction = await _getTransaction(transactionId);
+    if (transaction == null) {
+      return Future.error('Transaction with ID $transactionId does not exist.');
+    }
     await transactions.doc(transactionId).delete();
 
     // update user balance
-    var user = await getUser(transaction.userId);
+    User? user = await getUser(transaction.userId);
+    if (user == null) {
+      return Future.error('User with ID ${transaction.userId} does not exist.');
+    }
     user.balance -= transaction.amount;
     await updateUser(user);
     return Future.value(true);
   }
 
-  Future<shekel.Transaction> getTransaction(String transactionId) async {
+  Future<shekel.Transaction?> _getTransaction(String transactionId) async {
     CollectionReference transactions = firestore.collection('transactions');
     DocumentSnapshot snapshot = await transactions.doc(transactionId).get();
+    if (!snapshot.exists) {
+      return Future.value(null);
+    }
     return shekel.Transaction.fromJson(snapshot.data() as Map<String, dynamic>);
   }
 
@@ -115,7 +127,10 @@ class DefaultService {
   }
 
   Future<Family> _addUserToFamily(String familyId, User user) async {
-    var family = await getFamily(familyId);
+    Family? family = await getFamily(familyId);
+    if (family == null) {
+      return Future.error('Family with ID $familyId does not exist.');
+    }
     user.familyId = familyId;
     family.addUser(user, user.role);
     await updateUser(user);
@@ -124,7 +139,10 @@ class DefaultService {
   }
 
   Future<Family> _removeUserFromFamily(String familyId, User user) async {
-    var family = await getFamily(familyId);
+    Family? family = await getFamily(familyId);
+    if (family == null) {
+      return Future.error('Family with ID $familyId does not exist.');
+    }
     family.removeUser(user.id, user.role);
     user.familyId = null;
     await updateUser(user);
@@ -133,7 +151,9 @@ class DefaultService {
   }
 
   // a method to create a user
-  User createUser(User user) {
+  User createUser({String? familyId, required String id, required Role role, required String username, String? firstName, String? lastName, String? image}) {
+    User user = User(familyId: familyId, id: id, username: username, role: Role.child, firstName: firstName, lastName: lastName, image: image); 
+
     CollectionReference users = firestore.collection('users');
     users.doc(user.id).set(user.toJson());
 
@@ -146,7 +166,10 @@ class DefaultService {
   // a method to remove a user
   Future<bool> removeUser(String userId) async {
     CollectionReference users = firestore.collection('users');
-    var user = await getUser(userId);
+    User? user = await getUser(userId);
+    if (user == null) {
+      return Future.error('User with ID $userId does not exist.');
+    }
     await _removeUserFromFamily(user.familyId!, user);
     await users.doc(userId).delete();
     return Future.value(true);
@@ -160,21 +183,13 @@ class DefaultService {
   }
 
   // a method to get a user
-  Future<User> getUser(String userId) async {
+  Future<User?> getUser(String userId) async {
     CollectionReference users = firestore.collection('users');
     DocumentSnapshot snapshot = await users.doc(userId).get();
-    return User.fromJson(snapshot.data() as Map<String, dynamic>);
-  }
-
-  // a method to get a user by username
-  Future<User?> getUserByUsername(String username) async {
-    CollectionReference users = firestore.collection('users');
-    QuerySnapshot snapshot =
-        await users.where('username', isEqualTo: username).get();
-    if (snapshot.docs.isEmpty) {
+    if (snapshot.data() == null) {
       return Future.value(null);
     }
-    return User.fromJson(snapshot.docs.first.data() as Map<String, dynamic>);
+    return User.fromJson(snapshot.data() as Map<String, dynamic>);
   }
 
   // a method to get all users per family

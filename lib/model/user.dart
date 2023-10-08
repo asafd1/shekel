@@ -1,11 +1,9 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:uuid/uuid.dart';
 
 enum Role {  
   parent,
   child, 
 }
-  
 
 class User {
   String id;
@@ -32,8 +30,7 @@ class User {
     this.updatedAt,
   );
 
-  factory User({familyId, role, username, firstName, lastName, image}) {
-    var id = const Uuid().v4();
+  factory User({familyId, id, role, username, firstName, lastName, image}) {
     var balance = 0;
     var now = DateTime.now();
     return User._(
