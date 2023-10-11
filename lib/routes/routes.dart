@@ -23,7 +23,7 @@ class Routes {
 
     switch (settings.name) {
       case home:
-        return MaterialPageRoute(builder: (_) => const HomePageWidget());
+        return MaterialPageRoute(builder: (_) => HomePageWidget(valuePassed.isNotEmpty ? valuePassed['familyId'] : null));
       case login:
         return MaterialPageRoute(builder: (_) => const LoginPageWidget());
       case familyView:
