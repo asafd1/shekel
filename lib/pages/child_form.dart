@@ -35,7 +35,7 @@ class ChildFormWidgetState extends State<ChildFormWidget> {
 
   @override
   Widget build(BuildContext context) {
-    service = AppState.service(context);
+    service = AppState().service;
 
     return ShekelScaffold(
       Form(

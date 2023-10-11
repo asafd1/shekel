@@ -29,7 +29,7 @@ class _TransactionsListWidgetState extends State<TransactionsListWidget> {
 
   @override
   Widget build(BuildContext context) {
-    service = AppState.service(context);
+    service = AppState().service;
 
     return Column(
       children: [

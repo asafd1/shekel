@@ -1,14 +1,39 @@
-import 'package:provider/provider.dart';
+import 'package:firebase_core/firebase_core.dart';
+import 'package:flutter/material.dart';
 import 'package:shekel/model/user.dart';
+import 'package:shekel/routes/routes.dart';
 import 'package:shekel/service/default_service.dart';
 
 class AppState {
   User? _signedInUser;
-  final DefaultService _service;
+  DefaultService? _service;
+  GlobalKey<NavigatorState>? _navigatorKey;
 
-  AppState({required service}) : _service = service;
+  // Singleton instance
+  static final AppState _instance = AppState._internal();
 
-  static DefaultService service(context) => Provider.of<AppState>(context, listen: false)._service;
-  static User setSignedInUser(context, User user) => Provider.of<AppState>(context, listen: false)._signedInUser = user;
-  static User? getSignedInUser(context) => Provider.of<AppState>(context, listen: false)._signedInUser;
+  factory AppState() => _instance;
+
+  AppState._internal();
+
+  Future<void> init(FirebaseApp app) async {
+    _service = DefaultService(app);
+    _navigatorKey = GlobalKey<NavigatorState>();
+  }  
+
+  get service => _service;
+
+  get signedInUser => _signedInUser;
+  set signedInUser(signedInUser) => _signedInUser = signedInUser;
+
+  void goto(String routeName, {Map<String, dynamic>? arguments}) {
+    _navigatorKey!.currentState!.push(
+      Routes.generateRoute(
+        RouteSettings(
+          name: routeName,
+          arguments: arguments,
+        ),
+      ),
+    );
+  }
 }

@@ -53,7 +53,7 @@ class _ChildViewWidgetState extends State<ChildViewWidget> {
             ),
           ],
         ),
-        TransactionsListWidget(widget.child.id, _updateUserBalance, readonly: AppState.getSignedInUser(context)!.role != Role.parent),
+        TransactionsListWidget(widget.child.id, _updateUserBalance, readonly: AppState().signedInUser!.role != Role.parent),
       ]),
     );
   }

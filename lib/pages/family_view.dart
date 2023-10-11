@@ -40,7 +40,7 @@ class FamilyViewWidget extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    DefaultService service = AppState.service(context);
+    DefaultService service = AppState().service;
 
     return FutureBuilder<Family?>(
       future: service.getFamily(user.familyId!),

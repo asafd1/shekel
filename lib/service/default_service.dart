@@ -144,8 +144,6 @@ class DefaultService {
       return Future.error('Family with ID $familyId does not exist.');
     }
     family.removeUser(user.id, user.role);
-    user.familyId = null;
-    await updateUser(user);
     await updateFamily(family);
     return family;
   }
@@ -170,8 +168,8 @@ class DefaultService {
     if (user == null) {
       return Future.error('User with ID $userId does not exist.');
     }
-    await _removeUserFromFamily(user.familyId!, user);
     await users.doc(userId).delete();
+    await _removeUserFromFamily(user.familyId!, user);
     return Future.value(true);
   }
 

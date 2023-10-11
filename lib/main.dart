@@ -1,20 +1,19 @@
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-import 'package:shekel/util/app_state.dart';
-import 'firebase_options.dart';
-
-import 'package:shekel/service/default_service.dart';
 import 'package:shekel/routes/routes.dart';
+import 'package:shekel/util/app_state.dart';
+
+import 'firebase_options.dart';
 
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
-  FirebaseApp app =
-      await Firebase.initializeApp(options: DefaultFirebaseOptions.android);
+  FirebaseApp app = await Firebase.initializeApp(options: DefaultFirebaseOptions.android);
+  AppState().init(app);
 
   // var sharedPreferences = await SharedPreferences.getInstance();
   runApp(Provider(
-    create: (context) => AppState(service: DefaultService(app)),
+    create: (context) => AppState(),
     child: const AppMain(),
     )
   );

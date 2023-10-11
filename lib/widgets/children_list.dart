@@ -23,7 +23,7 @@ class _ChildrenListWidgetState extends State<ChildrenListWidget> {
 
   @override
   Widget build(BuildContext context) {
-    service = AppState.service(context);
+    service = AppState().service;
 
     return Column(
       children: [

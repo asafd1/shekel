@@ -30,7 +30,7 @@ class FamilyFormWidgetState extends State<FamilyFormWidget> {
 
   @override
   Widget build(BuildContext context) {
-    _service = AppState.service(context);
+    _service = AppState().service;
 
     return ShekelScaffold(
       Form(
@@ -90,7 +90,7 @@ class FamilyFormWidgetState extends State<FamilyFormWidget> {
       widget.parent.familyId = family.id;
       widget.parent.role = Role.parent;
       _service.updateUser(widget.parent);
-      Navigator.pushNamed(context, Routes.familyView, 
+      Navigator.pushReplacementNamed(context, Routes.familyView, 
                           arguments: {"user": widget.parent});
     });
   }

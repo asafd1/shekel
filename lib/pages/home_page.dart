@@ -9,8 +9,10 @@ import 'package:shekel/util/app_state.dart';
 import 'package:shekel/util/authentication.dart';
 import 'package:shekel/util/oauth_user.dart';
 
-class HomePageWidget extends StatefulWidget {  
-  const HomePageWidget({super.key});
+class HomePageWidget extends StatefulWidget {
+  final String? familyId;
+
+  const HomePageWidget(this.familyId, {super.key,});
 
   @override
   State<HomePageWidget> createState() => _HomePageWidgetState();
@@ -19,7 +21,7 @@ class HomePageWidget extends StatefulWidget {
 class _HomePageWidgetState extends State<HomePageWidget> {
   final GoogleAuth _googleAuth = GoogleAuth();
   String? username;
-
+  
   @override
   void initState() {
     super.initState();
@@ -27,8 +29,9 @@ class _HomePageWidgetState extends State<HomePageWidget> {
 
   @override
   Widget build(BuildContext context) {
-    DefaultService service = AppState.service(context);
+    DefaultService service = AppState().service;
 
+    // Handle login and navigate to the appropriate home screen
     return FutureBuilder<OAuthUser?>(
       future: _googleAuth.signInSilently(),
       builder: (BuildContext context, AsyncSnapshot<OAuthUser?> snapshot) {
@@ -44,12 +47,12 @@ class _HomePageWidgetState extends State<HomePageWidget> {
           return const LoginPageWidget();
         }
 
-        return _getHomeView(service, signedInUser);
+        return _getHomeScreen(service, signedInUser);
       },
     );
   }
 
- Widget _getHomeView(DefaultService service, OAuthUser signedInUser) {
+ Widget _getHomeScreen(DefaultService service, OAuthUser signedInUser) {
     return FutureBuilder(
       future: service.getUser(signedInUser.id),
       builder: (BuildContext context, AsyncSnapshot snapshot) {
@@ -62,12 +65,13 @@ class _HomePageWidgetState extends State<HomePageWidget> {
         
         User? user = snapshot.data;
         user ??= service.createUser(id: signedInUser.id,
-                                      username: signedInUser.username,
-                                      firstName: signedInUser.firstName,
-                                      lastName: signedInUser.lastName,
-                                      image: signedInUser.image,
-                                      role: Role.parent);
-        AppState.setSignedInUser(context, user);
+                                    familyId: widget.familyId,
+                                    username: signedInUser.username,
+                                    firstName: signedInUser.firstName,
+                                    lastName: signedInUser.lastName,
+                                    image: signedInUser.image,
+                                    role: Role.parent);
+        AppState().signedInUser = user;
         if (user.familyId == null) {
           return FamilyFormWidget(user);
         }
