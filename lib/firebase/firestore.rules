@@ -1,0 +1,50 @@
+rules_version = '2';
+
+service cloud.firestore {
+  match /databases/{database}/documents {
+		
+    function isParent(auth, familyId) {
+	    let actor = get(/databases/$(database)/documents/users/$(auth.uid));
+
+    	return actor != null && 
+              actor.data.role == 'parent'  
+              && actor.data.familyId == familyId;
+    }
+    
+    function isParentTransaction(auth, childId) {
+	    let actor = get(/databases/$(database)/documents/users/$(auth.uid));
+	    let child = get(/databases/$(database)/documents/users/$(childId));
+    	
+      return actor != null && child != null &&
+        			actor.data.role == 'parent' && 
+    					actor.data.familyId == child.data.familyId;
+    }
+
+		// Allow every signed-in user to create a family.
+    match /families/{id} {
+      allow create: if request.auth != null;
+    }
+		
+    // Allow every signed-in user to manage itself.    
+    match /users/{id} {
+      allow get, update, delete: if request.auth.uid == id;
+      allow create: if request.auth.uid == request.resource.data.id;
+    }
+      
+    match /users/{id} {
+      allow get, list, update, delete: if request.auth != null && isParent(request.auth, resource.data.familyId);
+      allow create: if request.auth != null && isParent(request.auth, request.resource.data.familyId);
+    }
+
+    // allow parents to manage their families
+    match /families/{id} {
+      allow read, write: if request.auth != null && isParent(request.auth, resource.data.id);
+    }
+
+    // allow parents to manage their children's transactions
+    match /transactions/{id} {
+      allow get, list, update, delete: if request.auth != null && isParentTransaction(request.auth, resource.data.userId);
+      allow create: if request.auth != null && isParentTransaction(request.auth, request.resource.data.userId);
+    }
+	}
+}
