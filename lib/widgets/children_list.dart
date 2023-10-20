@@ -1,7 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:shekel/model/family.dart';
-import 'package:shekel/model/user.dart';
-import 'package:shekel/routes/routes.dart';
 import 'package:shekel/service/default_service.dart';
 import 'package:shekel/util/app_state.dart';
 import 'package:shekel/widgets/child_tile.dart';
@@ -30,10 +28,10 @@ class _ChildrenListWidgetState extends State<ChildrenListWidget> {
         Container(
           color: Colors.blue,
           padding: const EdgeInsets.all(16.0),
-          child: Row(
+          child: const Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
-              const Text(
+              Text(
                 'Children',
                 style: TextStyle(
                   fontSize: 24.0,
@@ -41,7 +39,7 @@ class _ChildrenListWidgetState extends State<ChildrenListWidget> {
                   color: Colors.white,
                 ),
               ),
-              _addChildButton(context),
+              // _addChildButton(context),
             ],
           ),
         ),
@@ -50,21 +48,21 @@ class _ChildrenListWidgetState extends State<ChildrenListWidget> {
     );
   }
 
-  Widget _addChildButton(BuildContext context) {
-    return FloatingActionButton(
-      onPressed: () {
-        Navigator.pushNamed(context, Routes.childForm,
-            arguments: {"family": widget.family}).then((child) {
-          if (child != null) {
-            setState(() {
-              widget.family.children.add(child as User);
-            });
-          }
-        });
-      },
-      child: const Icon(Icons.add),
-    );
-  }
+  // Widget _addChildButton(BuildContext context) {
+  //   return FloatingActionButton(
+  //     onPressed: () {
+  //       Navigator.pushNamed(context, Routes.childForm,
+  //           arguments: {"family": widget.family}).then((child) {
+  //         if (child != null) {
+  //           setState(() {
+  //             widget.family.children.add(child as User);
+  //           });
+  //         }
+  //       });
+  //     },
+  //     child: const Icon(Icons.add),
+  //   );
+  // }
 
   Widget _listView(list) {
     if (list.isEmpty) {

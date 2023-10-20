@@ -63,6 +63,12 @@ class DefaultService {
     return family;
   }
 
+  Future<bool> isFamilyExists(String familyId) async {
+    CollectionReference families = firestore.collection('families');
+    DocumentSnapshot snapshot = await families.doc(familyId).get();
+    return snapshot.exists;
+  }
+
   // a method to create a transaction
   Future<shekel.Transaction> createTransaction(
       String userId, num amount, String description, DateTime datetime) async {
@@ -134,7 +140,6 @@ class DefaultService {
     user.familyId = familyId;
     family.addUser(user, user.role);
     await updateUser(user);
-    await updateFamily(family);
     return family;
   }
 

@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:shekel/model/user.dart';
 import 'package:shekel/pages/child_view.dart';
-import 'package:shekel/pages/family_form.dart';
 import 'package:shekel/pages/family_view.dart';
 import 'package:shekel/pages/login.dart';
+import 'package:shekel/pages/role_choice.dart';
 import 'package:shekel/service/default_service.dart';
 import 'package:shekel/util/app_state.dart';
 import 'package:shekel/util/authentication.dart';
@@ -39,6 +39,7 @@ class _HomePageWidgetState extends State<HomePageWidget> {
           return const CircularProgressIndicator();
         }
         if (snapshot.hasError) {
+          // TODO: open login page
           throw snapshot.error!;
         }
 
@@ -73,7 +74,7 @@ class _HomePageWidgetState extends State<HomePageWidget> {
                                     role: Role.parent);
         AppState().signedInUser = user;
         if (user.familyId == null) {
-          return FamilyFormWidget(user);
+          return RoleChoicePageWidget(user);
         }
         
         if (user.role == Role.child) {

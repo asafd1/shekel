@@ -10,6 +10,7 @@ Future<void> initUniLinks() async {
 
 Future<void> initPlatformState() async {
   // Listen for incoming links
+    
   try {
     final initialLink = await getInitialLink();
     _handleDeepLink(initialLink);

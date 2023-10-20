@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:shekel/model/user.dart';
 import 'package:shekel/routes/routes.dart';
-import 'package:shekel/service/default_service.dart';
 import 'package:shekel/util/app_state.dart';
 import 'package:shekel/util/util.dart';
 import 'package:shekel/widgets/scaffold.dart';
@@ -19,7 +18,6 @@ class FamilyFormWidgetState extends State<FamilyFormWidget> {
   final _formKey = GlobalKey<FormState>();
   late TextEditingController _nameController;
   late TextEditingController _imageUrlController;
-  late final DefaultService _service;
 
   @override
   void initState() {
@@ -30,8 +28,6 @@ class FamilyFormWidgetState extends State<FamilyFormWidget> {
 
   @override
   Widget build(BuildContext context) {
-    _service = AppState().service;
-
     return ShekelScaffold(
       Form(
       key: _formKey,
@@ -86,10 +82,10 @@ class FamilyFormWidgetState extends State<FamilyFormWidget> {
   }
 
   void _onSubmit(String familyName, String? familyImage) {
-    _service.createFamily(familyName, familyImage).then((family) {
+    AppState().service.createFamily(familyName, familyImage).then((family) {
       widget.parent.familyId = family.id;
       widget.parent.role = Role.parent;
-      _service.updateUser(widget.parent);
+      AppState().service.updateUser(widget.parent);
       Navigator.pushReplacementNamed(context, Routes.familyView, 
                           arguments: {"user": widget.parent});
     });

@@ -19,8 +19,11 @@ class GoogleAuth {
 
   Future<OAuthUser> _signIn({bool silently = false}) async {
     // Trigger the authentication flow
-    final GoogleSignInAccount? googleUser = silently ? await _googleSignIn.signInSilently() : await _googleSignIn.signIn();
+    GoogleSignInAccount? googleUser = silently ? await _googleSignIn.signInSilently() : await _googleSignIn.signIn();
 
+    if (googleUser == null && silently) {
+      googleUser = await _googleSignIn.signIn();
+    }
     // Obtain the auth details from the request
     final GoogleSignInAuthentication? googleAuth = await googleUser?.authentication;
 
