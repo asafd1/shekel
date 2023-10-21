@@ -17,19 +17,24 @@ class _LoginPageWidgetState extends State<LoginPageWidget> {
   Widget build(BuildContext context) {
     return ShekelScaffold(
       Center(
-        child: !_inProgress ? 
-          ElevatedButton(
-            onPressed: () {
-              setState(() {
-                _inProgress = true;
-              });
-              GoogleAuth().signIn().then((username) {
-                Navigator.popAndPushNamed(context, Routes.home);
-              });
-            },
-            child: const Text('Login'),
-          ) : 
-          const CircularProgressIndicator(),
+        child: !_inProgress
+            ? ElevatedButton(
+                onPressed: () {
+                  setState(() {
+                    _inProgress = true;
+                  });
+
+                  GoogleAuth().signIn().then((username) {
+                    Navigator.popAndPushNamed(context, Routes.home);
+                  }).onError((error, stackTrace) {
+                    setState(() {
+                      _inProgress = false;
+                    });
+                  });
+                },
+                child: const Text('Login'),
+              )
+            : const CircularProgressIndicator(),
       ),
     );
   }

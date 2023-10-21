@@ -42,13 +42,13 @@ class _HomePageWidgetState extends State<HomePageWidget> {
           return const CircularProgressIndicator();
         }
         if (snapshot.hasError) {
-          // TODO: open login page
-            FirebaseCrashlytics.instance.recordError(
-              snapshot.error,
-              null,
-              reason: 'failed to sign in silently'
-            );
-            throw snapshot.error!;
+          // navigate to login page
+          FirebaseCrashlytics.instance.recordError(
+            snapshot.error,
+            null,
+            reason: 'failed to sign in silently'
+          );
+          return const LoginPageWidget();
         }
 
         FirebaseCrashlytics.instance.log("Done sign-in process. snapshot.data: '${snapshot.data}'");
@@ -73,11 +73,11 @@ class _HomePageWidgetState extends State<HomePageWidget> {
           return const CircularProgressIndicator();
         }
         if (snapshot.hasError) {
-            FirebaseCrashlytics.instance.recordError(
-                          snapshot.error,
-                          null,
-                          reason: 'failed to get user'
-            );
+          FirebaseCrashlytics.instance.recordError(
+                        snapshot.error,
+                        null,
+                        reason: 'failed to get user'
+          );
           throw snapshot.error!;
         }
         
