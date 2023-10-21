@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 
 class TransactionFormDialog extends StatefulWidget {
-
   const TransactionFormDialog({super.key});
 
   @override
@@ -13,8 +12,9 @@ class TransactionFormDialogState extends State<TransactionFormDialog> {
   static final DateFormat formatter = DateFormat('dd/MM/yyyy');
   final _amountController = TextEditingController();
   final _descriptionController = TextEditingController();
-  final _dateController = TextEditingController(text: formatter.format(DateTime.now()));
-  
+  final _dateController =
+      TextEditingController(text: formatter.format(DateTime.now()));
+
   @override
   void dispose() {
     _amountController.dispose();
@@ -55,6 +55,17 @@ class TransactionFormDialogState extends State<TransactionFormDialog> {
               labelText: 'Date',
             ),
             keyboardType: TextInputType.datetime,
+            onTap: () async {
+              final DateTime? picked = await showDatePicker(
+                context: context,
+                initialDate: DateTime.now(),
+                firstDate: DateTime(1900),
+                lastDate: DateTime.now(),
+              );
+              if (picked != null) {
+                _dateController.text = formatter.format(picked);
+              }
+            },
           ),
         ],
       ),
@@ -69,7 +80,7 @@ class TransactionFormDialogState extends State<TransactionFormDialog> {
           onPressed: () {
             final amount = double.parse(_amountController.text);
             final description = _descriptionController.text;
-            final datetime = formatter.parse(_dateController.text);
+            final datetime = _parseDate(_dateController.text);
 
             final transaction = {
               "amount": amount,
@@ -83,5 +94,22 @@ class TransactionFormDialogState extends State<TransactionFormDialog> {
         ),
       ],
     );
+  }
+
+  DateTime? _parseDate(String date) {
+    try {
+      final now = DateTime.now();
+      final picked = formatter.parse(date);
+      return DateTime(
+        picked.year,
+        picked.month,
+        picked.day,
+        now.hour,
+        now.minute,
+        now.second,
+      );
+    } catch (e) {
+      return null;
+    }
   }
 }
