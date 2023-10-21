@@ -75,4 +75,13 @@ class User {
         "createdAt": createdAt,
         "updatedAt": updatedAt,
   };
+
+  void update(User child) {
+    familyId = child.familyId;
+    firstName = child.firstName;
+    lastName = child.lastName;
+    image = child.image;
+    balance = child.balance;
+    updatedAt = child.updatedAt;
+  }
 }

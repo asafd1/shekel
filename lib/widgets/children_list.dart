@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 import 'package:shekel/model/family.dart';
 import 'package:shekel/service/default_service.dart';
 import 'package:shekel/util/app_state.dart';
@@ -39,7 +40,6 @@ class _ChildrenListWidgetState extends State<ChildrenListWidget> {
                   color: Colors.white,
                 ),
               ),
-              // _addChildButton(context),
             ],
           ),
         ),
@@ -48,23 +48,8 @@ class _ChildrenListWidgetState extends State<ChildrenListWidget> {
     );
   }
 
-  // Widget _addChildButton(BuildContext context) {
-  //   return FloatingActionButton(
-  //     onPressed: () {
-  //       Navigator.pushNamed(context, Routes.childForm,
-  //           arguments: {"family": widget.family}).then((child) {
-  //         if (child != null) {
-  //           setState(() {
-  //             widget.family.children.add(child as User);
-  //           });
-  //         }
-  //       });
-  //     },
-  //     child: const Icon(Icons.add),
-  //   );
-  // }
-
   Widget _listView(list) {
+    Provider.of<AppState>(context, listen: false).setChildren(list);
     if (list.isEmpty) {
       return const Center(
         child: Text('Nothing here.'),

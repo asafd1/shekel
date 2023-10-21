@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 import 'package:shekel/model/transaction.dart';
 import 'package:shekel/service/default_service.dart';
 import 'package:shekel/util/app_state.dart';
@@ -7,12 +8,10 @@ import 'package:shekel/widgets/transaction_tile.dart';
 
 class TransactionsListWidget extends StatefulWidget {
   final String childId;
-  final Function setUserBalance;
   final bool readonly;
 
   const TransactionsListWidget(
-    this.childId,
-    this.setUserBalance, {
+    this.childId, {
     super.key,
     this.readonly = true,
   });
@@ -58,22 +57,19 @@ class _TransactionsListWidgetState extends State<TransactionsListWidget> {
 
   Widget _addTransactionButton(BuildContext context) {
     return FloatingActionButton(
-      onPressed: () async {
-        final input = await showDialog(
+      onPressed: () {
+        showDialog(
           barrierDismissible: false,
           context: context,
           builder: (context) => const TransactionFormDialog(),
-        );
-        if (input == null) {
-          return;
-        }
-        Transaction transaction = await service.createTransaction(
-            widget.childId,
-            input["amount"],
-            input["description"],
-            input["datetime"]);
-        setState(() {
-          widget.setUserBalance(transaction.amount);
+        ).then((input) {
+          if (input == null) {
+            return;
+          }
+          service.createTransaction(widget.childId, input["amount"],
+              input["description"], input["datetime"]);
+          Provider.of<AppState>(context, listen: false)
+              .updateChildBalance(widget.childId, input["amount"]);
         });
       },
       child: const Icon(Icons.add),
@@ -109,17 +105,18 @@ class _TransactionsListWidgetState extends State<TransactionsListWidget> {
         shrinkWrap: true,
         itemCount: transactions.length,
         itemBuilder: (context, index) {
-          return TransactionListTile(transactions[index], widget.readonly ? null : _removeTransaction,
-              );
+          return TransactionListTile(
+            transactions[index],
+            widget.readonly ? null : _removeTransaction,
+          );
         },
       ),
     );
   }
 
   _removeTransaction(Transaction transaction) async {
+    Provider.of<AppState>(context, listen: false)
+        .updateChildBalance(widget.childId, -transaction.amount);
     await service.removeTransaction(transaction.id);
-    setState(() {
-      widget.setUserBalance(-transaction.amount);
-    });
   }
 }

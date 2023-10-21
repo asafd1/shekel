@@ -62,7 +62,7 @@ class TransactionListTileState extends State<TransactionListTile> {
             bool userConfirmed = await showDeleteConfirmation(
                 context, 'Are you sure you want to delete this transaction?');
             if (userConfirmed) {
-              widget._removeTransaction!(widget.transaction);
+              await widget._removeTransaction!(widget.transaction);
             }
           }),
     );

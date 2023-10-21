@@ -16,7 +16,7 @@ Future<void> main() async {
   AppState().init(app);
 
   // var sharedPreferences = await SharedPreferences.getInstance();
-  runApp(Provider(
+  runApp(ChangeNotifierProvider(
     create: (context) => AppState(),
     child: const AppMain(),
     )

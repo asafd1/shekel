@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
+import 'package:provider/provider.dart';
 import 'package:shekel/util/app_state.dart';
 import 'package:shekel/widgets/scaffold.dart';
 import 'package:shekel/widgets/transactions_list.dart';
@@ -23,6 +24,7 @@ class _ChildViewWidgetState extends State<ChildViewWidget> {
 
   @override
   Widget build(BuildContext context) {
+    User child = Provider.of<AppState>(context).getChild(widget.child.id);
     return ShekelScaffold(
       Column(children: [
         Column(
@@ -30,12 +32,12 @@ class _ChildViewWidgetState extends State<ChildViewWidget> {
           children: [
             CircleAvatar(
               radius: 50.0,
-              child: widget.child.image != null
-                  ? Image.network(widget.child.image!)
+              child: child.image != null
+                  ? Image.network(child.image!)
                   : const Icon(Icons.person_2_outlined),
             ),
             Text(
-              widget.child.firstName,
+              child.firstName,
               style: const TextStyle(
                 fontSize: 24.0,
                 fontWeight: FontWeight.bold,
@@ -44,7 +46,7 @@ class _ChildViewWidgetState extends State<ChildViewWidget> {
             ),
             // SizedBox(width: 10.0),
             Text(
-              '${NumberFormat('#,###').format(widget.child.balance)} $currency',
+              '${NumberFormat('#,###').format(child.balance)} $currency',
               style: const TextStyle(
                 fontSize: 24.0,
                 fontWeight: FontWeight.bold,
@@ -53,14 +55,8 @@ class _ChildViewWidgetState extends State<ChildViewWidget> {
             ),
           ],
         ),
-        TransactionsListWidget(widget.child.id, _updateUserBalance, readonly: AppState().signedInUser!.role != Role.parent),
+        TransactionsListWidget(child.id, readonly: AppState().signedInUser!.role != Role.parent),
       ]),
     );
-  }
-
-  _updateUserBalance(num amount) {
-    setState(() {
-      widget.child.balance += amount;
-    });
   }
 }
