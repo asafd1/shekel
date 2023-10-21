@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:shekel/model/user.dart';
 import 'package:shekel/routes/routes.dart';
+import 'package:shekel/util/app_state.dart';
 import 'package:shekel/util/authentication.dart';
 
 class ShekelDrawer extends StatelessWidget {
@@ -37,7 +38,8 @@ class ShekelDrawer extends StatelessWidget {
             leading: const Icon(Icons.logout),
             title: const Text('Sign Out'),
             onTap: () {
-              GoogleAuth().signOut().then((value) => Navigator.pushNamed(context, Routes.login));
+              AppState().signedInUser = null;
+              GoogleAuth().signOut().then((value) => Navigator.pushNamedAndRemoveUntil(context, Routes.login, (route) => false));
             },
           ),
         ],

@@ -12,7 +12,7 @@ class ShekelScaffold extends StatelessWidget {
   Widget build(BuildContext context) {
     User? user = AppState().signedInUser;
     return Scaffold(
-      endDrawer: ShekelDrawer(user),
+      endDrawer: user != null ? ShekelDrawer(user) : null,
       appBar: ShekelAppBar(user),
       body: child,
     );

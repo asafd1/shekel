@@ -13,15 +13,17 @@ class ShekelAppBar extends StatelessWidget implements PreferredSizeWidget {
 
   @override
   Widget build(BuildContext context) {
-    actions.add(
-      IconButton(
-        icon: const Icon(Icons.person),
-        tooltip: 'Profile',
-        onPressed: () {
-          Scaffold.of(context).openEndDrawer();
-        },
-      ),
-    );
+    if (user != null) {
+      actions.add(
+        IconButton(
+          icon: const Icon(Icons.person),
+          tooltip: 'Profile',
+          onPressed: () {
+            Scaffold.of(context).openEndDrawer();
+          },
+        ),
+      );
+    }
     if (Navigator.canPop(context)) {
       actions.add(
         IconButton(
