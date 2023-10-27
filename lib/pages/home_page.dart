@@ -13,7 +13,10 @@ import 'package:shekel/util/oauth_user.dart';
 class HomePageWidget extends StatefulWidget {
   final String? familyId;
 
-  const HomePageWidget(this.familyId, {super.key,});
+  const HomePageWidget(
+    this.familyId, {
+    super.key,
+  });
 
   @override
   State<HomePageWidget> createState() => _HomePageWidgetState();
@@ -22,7 +25,7 @@ class HomePageWidget extends StatefulWidget {
 class _HomePageWidgetState extends State<HomePageWidget> {
   final GoogleAuth _googleAuth = GoogleAuth();
   String? username;
-  
+
   @override
   void initState() {
     super.initState();
@@ -43,15 +46,13 @@ class _HomePageWidgetState extends State<HomePageWidget> {
         }
         if (snapshot.hasError) {
           // navigate to login page
-          FirebaseCrashlytics.instance.recordError(
-            snapshot.error,
-            null,
-            reason: 'failed to sign in silently'
-          );
+          FirebaseCrashlytics.instance.recordError(snapshot.error, null,
+              reason: 'failed to sign in silently');
           return const LoginPageWidget();
         }
 
-        FirebaseCrashlytics.instance.log("Done sign-in process. snapshot.data: '${snapshot.data}'");
+        FirebaseCrashlytics.instance
+            .log("Done sign-in process. snapshot.data: '${snapshot.data}'");
 
         OAuthUser? signedInUser = snapshot.data;
         if (signedInUser == null) {
@@ -63,50 +64,48 @@ class _HomePageWidgetState extends State<HomePageWidget> {
     );
   }
 
- Widget _getHomeScreen(DefaultService service, OAuthUser signedInUser) {
+  Widget _getHomeScreen(DefaultService service, OAuthUser signedInUser) {
     FirebaseCrashlytics.instance.log("Getting home screen");
 
     return FutureBuilder(
-      future: service.getUser(signedInUser.id),
-      builder: (BuildContext context, AsyncSnapshot snapshot) {
-        if (snapshot.connectionState != ConnectionState.done) {
-          return const CircularProgressIndicator();
-        }
-        if (snapshot.hasError) {
-          FirebaseCrashlytics.instance.recordError(
-                        snapshot.error,
-                        null,
-                        reason: 'failed to get user'
-          );
-          throw snapshot.error!;
-        }
-        
-        FirebaseCrashlytics.instance.log("Creating user");
+        future: service.getUser(signedInUser.id),
+        builder: (BuildContext context, AsyncSnapshot snapshot) {
+          if (snapshot.connectionState != ConnectionState.done) {
+            return const CircularProgressIndicator();
+          }
+          if (snapshot.hasError) {
+            FirebaseCrashlytics.instance.recordError(snapshot.error, null,
+                reason: 'failed to get user');
+            throw snapshot.error!;
+          }
 
-        User? user = snapshot.data;
-        user ??= service.createUser(id: signedInUser.id,
-                                    familyId: widget.familyId,
-                                    username: signedInUser.username,
-                                    firstName: signedInUser.firstName,
-                                    lastName: signedInUser.lastName,
-                                    image: signedInUser.image,
-                                    role: Role.parent);
-        FirebaseCrashlytics.instance.log("User created successfully");
+          FirebaseCrashlytics.instance.log("Creating user");
 
-        AppState().signedInUser = user;
-        if (user.familyId == null) {
-          FirebaseCrashlytics.instance.log("Navigating to RoleChoicePageWidget");
-          return RoleChoicePageWidget(user);
-        }
-        
-        if (user.role == Role.child) {
-          FirebaseCrashlytics.instance.log("Navigating to ChildViewWidget");
-          return ChildViewWidget(user);
-        } else {
-          FirebaseCrashlytics.instance.log("Navigating to FamilyViewWidget");
-          return FamilyViewWidget(user);
-        }
-      }
-    );
+          User? user = snapshot.data;
+          user ??= service.createUser(
+              id: signedInUser.id,
+              familyId: widget.familyId,
+              username: signedInUser.username,
+              firstName: signedInUser.firstName,
+              lastName: signedInUser.lastName,
+              image: signedInUser.image,
+              role: Role.parent);
+          FirebaseCrashlytics.instance.log("User created successfully");
+
+          AppState().signedInUser = user;
+          if (user.familyId == null) {
+            FirebaseCrashlytics.instance
+                .log("Navigating to RoleChoicePageWidget");
+            return RoleChoicePageWidget(user);
+          }
+
+          if (user.role == Role.child) {
+            FirebaseCrashlytics.instance.log("Navigating to ChildViewWidget");
+            return ChildViewWidget(user);
+          } else {
+            FirebaseCrashlytics.instance.log("Navigating to FamilyViewWidget");
+            return FamilyViewWidget(user);
+          }
+        });
   }
 }
