@@ -98,8 +98,10 @@ class _TransactionsListWidgetState extends State<TransactionsListWidget> {
       );
     }
 
+    final listViewHeight = MediaQuery.of(context).size.height * 0.6;
+
     return SizedBox(
-      height: 200,
+      height: listViewHeight,
       child: ListView.builder(
         physics: const BouncingScrollPhysics(),
         shrinkWrap: true,
