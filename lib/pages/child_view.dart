@@ -24,7 +24,8 @@ class _ChildViewWidgetState extends State<ChildViewWidget> {
 
   @override
   Widget build(BuildContext context) {
-    User child = Provider.of<AppState>(context).getChild(widget.child.id);
+    Role role = AppState().signedInUser!.role;
+    User child = role == Role.parent ? Provider.of<AppState>(context).getChild(widget.child.id) : widget.child;
     return ShekelScaffold(
       Column(children: [
         Column(
@@ -55,7 +56,7 @@ class _ChildViewWidgetState extends State<ChildViewWidget> {
             ),
           ],
         ),
-        TransactionsListWidget(child.id, readonly: AppState().signedInUser!.role != Role.parent),
+        TransactionsListWidget(child.id, readonly: role != Role.parent),
       ]),
     );
   }

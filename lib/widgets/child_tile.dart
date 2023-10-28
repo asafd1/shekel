@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:intl/intl.dart';
 import 'package:provider/provider.dart';
 import 'package:shekel/routes/routes.dart';
 import 'package:shekel/util/app_state.dart';
@@ -38,7 +39,7 @@ class ChildListTileState extends State<ChildListTile> {
         ),
       ),
       subtitle: Text(
-        '${widget.currency}${child.balance.toStringAsFixed(2)}',
+        '${NumberFormat('#,###').format(child.balance)} ${widget.currency}',
         style: const TextStyle(
           fontSize: 16.0,
         ),

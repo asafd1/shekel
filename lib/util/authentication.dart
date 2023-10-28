@@ -68,6 +68,7 @@ class GoogleAuth {
   Future<void> showBiometricsPinCodeScreen() async {
     final localAuth = LocalAuthentication();
 
+    await localAuth.stopAuthentication();
     // Check if biometric authentication is available.
     final isAvailable = await localAuth.canCheckBiometrics;
     if (!isAvailable) {
