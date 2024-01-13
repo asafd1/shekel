@@ -5,7 +5,7 @@ import 'package:flutter/material.dart';
 import '../model/user.dart';
 
 class ShekelAppBar extends StatelessWidget implements PreferredSizeWidget {
-  final String title = 'shekel';
+  final String title = 'Shekel';
   final List<Widget> actions = <Widget>[];
   final User? user;
 

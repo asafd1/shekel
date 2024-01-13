@@ -18,21 +18,39 @@ class _LoginPageWidgetState extends State<LoginPageWidget> {
     return ShekelScaffold(
       Center(
         child: !_inProgress
-            ? ElevatedButton(
-                onPressed: () {
-                  setState(() {
-                    _inProgress = true;
-                  });
+            ? Column(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  ElevatedButton(
+                    onPressed: () {
+                      setState(() {
+                        _inProgress = true;
+                      });
 
-                  GoogleAuth().signIn().then((username) {
-                    Navigator.popAndPushNamed(context, Routes.home);
-                  }).onError((error, stackTrace) {
-                    setState(() {
-                      _inProgress = false;
-                    });
-                  });
-                },
-                child: const Text('Login'),
+                      GoogleAuth().signIn().then((username) {
+                        Navigator.popAndPushNamed(context, Routes.home);
+                      }).onError((error, stackTrace) {
+                        setState(() {
+                          _inProgress = false;
+                        });
+                      });
+                    },
+                    child: Row(
+                      mainAxisSize: MainAxisSize.min,
+                      children: [
+                        Image.asset('assets/images/google.png',
+                            height: 24, width: 24),
+                        const SizedBox(width: 10),
+                        const Text('Login with Google'),
+                      ],
+                    ),
+                  ),
+                  const SizedBox(
+                      height:
+                          20), // Add some space between the button and the text
+                  const Text(
+                      'You need a Google account in order to use Shekel'),
+                ],
               )
             : const CircularProgressIndicator(),
       ),

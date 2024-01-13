@@ -1,18 +1,14 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:shekel/model/family.dart';
+import 'package:shekel/model/user.dart';
 import 'package:shekel/service/default_service.dart';
 import 'package:shekel/util/app_state.dart';
 import 'package:shekel/widgets/children_list.dart';
 import 'package:shekel/widgets/scaffold.dart';
 
-import '../model/user.dart';
-
 class FamilyViewWidget extends StatelessWidget {
   final User parent;
-
-  static const String defaultImageUrl =
-      'https://lh3.googleusercontent.com/a/ACg8ocLrlGobYpUGMnINyj5dFfxCzBQPNEEOLMVBkrr0LKkaocQ=s288-c-no';
 
   const FamilyViewWidget(
     this.parent, {
@@ -42,7 +38,7 @@ class FamilyViewWidget extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     DefaultService service = AppState().service;
-
+    
     return FutureBuilder<Family?>(
       future: service.getFamily(parent.familyId!),
       builder: (BuildContext context, AsyncSnapshot<Family?> snapshot) {
@@ -59,6 +55,8 @@ class FamilyViewWidget extends StatelessWidget {
   }
 
   Widget _getFamilyView(BuildContext context, Family family) {
+    String defaultImageUrl = 'https://firebasestorage.googleapis.com/v0/b/shekel-41250.appspot.com/o/families%2Fno-image.png?alt=media&token=9bc28d73-ebf3-4a3c-b109-97e6aee83eeb';
+
     return ShekelScaffold(
       Column(
         crossAxisAlignment: CrossAxisAlignment.start,

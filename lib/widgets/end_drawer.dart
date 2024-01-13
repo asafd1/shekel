@@ -33,6 +33,15 @@ class ShekelDrawer extends StatelessWidget {
               // Handle "Edit" action
             },
           ),
+          user!.role == 
+            Role.parent ? ListTile(
+              leading: const Icon(Icons.edit),
+              title: const Text('Edit Family'),
+              onTap: () {
+                AppState().goto(Routes.familyForm, user:user!);
+              },
+            ) : 
+            const SizedBox.shrink(),
           const Divider(),
           ListTile(
             leading: const Icon(Icons.logout),

@@ -37,17 +37,21 @@ dependencies:
   cupertino_icons: ^1.0.2
   cloud_firestore: ^4.9.0
   firebase_core: ^2.15.1
-  firebase_core_platform_interface: ^4.8.0
+  firebase_core_platform_interface: ^5.0.0
   uuid: ^4.0.0
   shared_preferences: ^2.2.1
   provider: ^6.0.5
-  firebase_auth: ^4.10.0
+  firebase_auth: ^4.12.0
   firebase_storage: ^11.2.7
   google_sign_in: ^6.1.5
   intl: ^0.17.0
   uni_links: ^0.5.1
   firebase_crashlytics: ^3.3.7
   local_auth: ^2.1.7
+  file_picker: ^6.0.0
+  http: ^1.1.0
+  path_provider: ^2.1.1
+  crypto: ^3.0.3
 
 
 dev_dependencies:
@@ -76,6 +80,7 @@ flutter:
 
   assets:
     - assets/images/shekel.png
+    - assets/images/google.png
 
   # An image asset can refer to one or more resolution-specific "variants", see
   # https://flutter.dev/assets-and-images/#resolution-aware

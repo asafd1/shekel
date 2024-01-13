@@ -48,6 +48,7 @@ class AppMain extends StatelessWidget {
       ),
       initialRoute: Routes.home,
       onGenerateRoute: Routes.generateRoute,
+      navigatorKey: AppState().navigatorKey,
     );
   }
 }

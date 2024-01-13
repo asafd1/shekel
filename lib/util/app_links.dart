@@ -37,5 +37,5 @@ void _handleDeepLink(String? deepLink) {
   // Access the query parameters
   final String? familyId = uri.queryParameters['familyId'];
   
-  AppState().goto(Routes.home, arguments: {'familyId': familyId});
+  AppState().goto(Routes.home, familyId: familyId);
 }

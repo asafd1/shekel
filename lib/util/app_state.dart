@@ -1,5 +1,6 @@
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
+import 'package:shekel/model/family.dart';
 import 'package:shekel/model/user.dart';
 import 'package:shekel/routes/routes.dart';
 import 'package:shekel/service/default_service.dart';
@@ -23,11 +24,21 @@ class AppState extends ChangeNotifier {
   }  
 
   get service => _service;
+  get navigatorKey => _navigatorKey;
 
   get signedInUser => _signedInUser;
   set signedInUser(signedInUser) => _signedInUser = signedInUser;
 
-  void goto(String routeName, {Map<String, dynamic>? arguments}) {
+  void goto(String routeName, {User? user, Family? family, String? familyId}) {
+    Map<String, dynamic> arguments = {};
+    if (user != null) {
+      arguments["user"] = user;
+    } else if (family != null) {
+      arguments["family"] = family;
+    } else if (familyId != null) {
+      arguments["familyId"] = familyId;
+    }
+
     _navigatorKey!.currentState!.push(
       Routes.generateRoute(
         RouteSettings(
