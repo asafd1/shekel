@@ -91,25 +91,33 @@ class FamilyViewWidget extends StatelessWidget {
                     const SizedBox(
                       height: 5,
                     ),
-                    TextButton(
-                      onPressed: () => generateInviteLink(context),
-                      style: ButtonStyle(
-                        padding: MaterialStateProperty.all<EdgeInsetsGeometry>(
-                            EdgeInsets.zero),
-                        minimumSize: MaterialStateProperty.all<Size>(Size.zero),
-                        alignment: Alignment.centerLeft,
-                        tapTargetSize: MaterialTapTargetSize.shrinkWrap,
-                        overlayColor: MaterialStateProperty.all<Color>(
-                            Colors.blue.withOpacity(0.2)),
-                      ),
-                      child: const Text(
-                        'Copy Invite Link',
-                        style: TextStyle(
-                          fontSize: 14.0,
-                          color: Colors.lightBlue,
-                        ),
+                    // label
+                    SelectableText(
+                      family.id,
+                      style: const TextStyle(
+                        fontSize: 14.0,
+                        color: Colors.grey,
                       ),
                     ),
+                    // TextButton(
+                    //   onPressed: () => generateInviteLink(context),
+                    //   style: ButtonStyle(
+                    //     padding: MaterialStateProperty.all<EdgeInsetsGeometry>(
+                    //         EdgeInsets.zero),
+                    //     minimumSize: MaterialStateProperty.all<Size>(Size.zero),
+                    //     alignment: Alignment.centerLeft,
+                    //     tapTargetSize: MaterialTapTargetSize.shrinkWrap,
+                    //     overlayColor: MaterialStateProperty.all<Color>(
+                    //         Colors.blue.withOpacity(0.2)),
+                    //   ),
+                    //   child: const Text(
+                    //     'Copy Invite Link',
+                    //     style: TextStyle(
+                    //       fontSize: 14.0,
+                    //       color: Colors.lightBlue,
+                    //     ),
+                    //   ),
+                    // ),
                   ],
                 ),
               ),

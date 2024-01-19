@@ -24,7 +24,7 @@ class DefaultService {
   }
 
   // a method to create a family
-  Future<Family> createFamily(String name, String? imageUrl) async {
+  Future<Family> createFamily(String name, [String? imageUrl]) async {
     var family = Family(name: name, imageUrl: imageUrl);
 
     CollectionReference families = firestore.collection('families');
@@ -155,7 +155,7 @@ class DefaultService {
 
   // a method to create a user
   User createUser({String? familyId, required String id, required Role role, required String username, String? firstName, String? lastName, String? image}) {
-    User user = User(familyId: familyId, id: id, username: username, role: Role.child, firstName: firstName, lastName: lastName, image: image); 
+    User user = User(familyId: familyId, id: id, username: username, role: role, firstName: firstName, lastName: lastName, image: image); 
 
     CollectionReference users = firestore.collection('users');
     users.doc(user.id).set(user.toJson());
