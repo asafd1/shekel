@@ -30,7 +30,7 @@ class User {
     this.updatedAt,
   );
 
-  factory User({familyId, id, role, username, firstName, lastName, image}) {
+  factory User({familyId, id, role = Role.child, username, firstName, lastName, image}) {
     var balance = 0;
     var now = DateTime.now();
     return User._(

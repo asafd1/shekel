@@ -53,24 +53,26 @@ class FamilyFormWidgetState extends State<FamilyFormWidget> {
   }
 
   Widget form(BuildContext context, {Family? family}) {
-    final String title = family == null ? 'Add Family' : 'Update Family';
+    const String title = 'Family Details';
     const String defaultImageUrl =
-        'https://firebasestorage.googleapis.com/v0/b/shekel-41250.appspot.com/o/families%2Fno-image.png?alt=media&token=9bc28d73-ebf3-4a3c-b109-97e6aee83eeb';
-
-    String imageUrl =
-        family?.imageUrl == null ? defaultImageUrl : family!.imageUrl!;
-    util.getFileByUri(imageUrl).then((f) {
-      setState(() {
-        _file = f;
+        'https://firebasestorage.googleapis.com/v0/b/shekel-41250.appspot.com/o/no-image.png?alt=media&token=d2ac82fc-402d-42a7-b302-0b037f9ab6b7';
+        
+    if (_file == null) {
+      String imageUrl =
+          family?.imageUrl == null ? defaultImageUrl : family!.imageUrl!;
+      util.getFileByUri(imageUrl).then((f) {
+        setState(() {
+          _file = f;
+        });
       });
-    });
+    }
 
     return ShekelScaffold(
       Column(
         children: [
           Title(
               color: Colors.blue,
-              child: Text(title, style: const TextStyle(fontSize: 30))),
+              child: const Text(title, style: TextStyle(fontSize: 30))),
           Center(
             child: GestureDetector(
               onTap: _selectFile,

@@ -26,13 +26,13 @@ class ShekelDrawer extends StatelessWidget {
             ),
           ),
           const Divider(),
-          ListTile(
-            leading: const Icon(Icons.edit),
-            title: const Text('Edit'),
-            onTap: () {
-              // Handle "Edit" action
-            },
-          ),
+          // ListTile(
+          //   leading: const Icon(Icons.edit),
+          //   title: const Text('Edit'),
+          //   onTap: () {
+          //     // Handle "Edit" action
+          //   },
+          // ),
           user!.role == 
             Role.parent ? ListTile(
               leading: const Icon(Icons.edit),

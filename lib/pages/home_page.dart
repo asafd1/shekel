@@ -79,20 +79,13 @@ class _HomePageWidgetState extends State<HomePageWidget> {
             throw snapshot.error!;
           }
 
-          FirebaseCrashlytics.instance.log("Creating user");
-
           User? user = snapshot.data;
-          user ??= service.createUser(
-              id: signedInUser.id,
-              familyId: widget.familyId,
-              username: signedInUser.username,
-              firstName: signedInUser.firstName,
-              lastName: signedInUser.lastName,
-              image: signedInUser.image,
-              role: Role.parent);
-          FirebaseCrashlytics.instance.log("User created successfully");
+          // user not found in db, create it, first in memory and once I get the role choice, in db 
+          user ??= User(id: signedInUser.id, username: signedInUser.username, firstName: signedInUser.firstName, lastName: signedInUser.lastName, image: signedInUser.image); 
 
           AppState().signedInUser = user;
+
+          // this is a new user. all existing users have a familyId
           if (user.familyId == null) {
             FirebaseCrashlytics.instance
                 .log("Navigating to RoleChoicePageWidget");
