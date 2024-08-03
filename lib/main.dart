@@ -5,12 +5,16 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:shekel/routes/routes.dart';
 import 'package:shekel/util/app_state.dart';
+import 'package:shekel/util/remote_config.dart';
 
 import 'firebase_options.dart';
 
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
   FirebaseApp app = await Firebase.initializeApp(options: DefaultFirebaseOptions.android);
+
+  await RemoteConfig().initialize();
+  
   errorConfig();
   
   AppState().init(app);

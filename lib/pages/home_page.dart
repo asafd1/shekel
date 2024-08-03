@@ -8,7 +8,7 @@ import 'package:shekel/pages/role_choice.dart';
 import 'package:shekel/service/default_service.dart';
 import 'package:shekel/util/app_state.dart';
 import 'package:shekel/util/authentication.dart';
-import 'package:shekel/util/oauth_user.dart';
+import 'package:shekel/util/user_identity.dart';
 
 class HomePageWidget extends StatefulWidget {
   final String? familyId;
@@ -23,7 +23,7 @@ class HomePageWidget extends StatefulWidget {
 }
 
 class _HomePageWidgetState extends State<HomePageWidget> {
-  final GoogleAuth _googleAuth = GoogleAuth();
+  final Authentication _authentication = Authentication();
   String? username;
 
   @override
@@ -38,9 +38,9 @@ class _HomePageWidgetState extends State<HomePageWidget> {
     FirebaseCrashlytics.instance.log("Starting sign-in process");
 
     // Handle login and navigate to the appropriate home screen
-    return FutureBuilder<OAuthUser?>(
-      future: _googleAuth.signInSilently(),
-      builder: (BuildContext context, AsyncSnapshot<OAuthUser?> snapshot) {
+    return FutureBuilder<UserIdentity?>(
+      future: _authentication.signInSilently(),
+      builder: (BuildContext context, AsyncSnapshot<UserIdentity?> snapshot) {
         if (snapshot.connectionState != ConnectionState.done) {
           return const CircularProgressIndicator();
         }
@@ -54,7 +54,7 @@ class _HomePageWidgetState extends State<HomePageWidget> {
         FirebaseCrashlytics.instance
             .log("Done sign-in process. snapshot.data: '${snapshot.data}'");
 
-        OAuthUser? signedInUser = snapshot.data;
+        UserIdentity? signedInUser = snapshot.data;
         if (signedInUser == null) {
           return const LoginPageWidget();
         }
@@ -64,7 +64,7 @@ class _HomePageWidgetState extends State<HomePageWidget> {
     );
   }
 
-  Widget _getHomeScreen(DefaultService service, OAuthUser signedInUser) {
+  Widget _getHomeScreen(DefaultService service, UserIdentity signedInUser) {
     FirebaseCrashlytics.instance.log("Getting home screen");
 
     return FutureBuilder(

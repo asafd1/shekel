@@ -48,7 +48,7 @@ class ShekelDrawer extends StatelessWidget {
             title: const Text('Sign Out'),
             onTap: () {
               AppState().signedInUser = null;
-              GoogleAuth().signOut().then((value) => Navigator.pushNamedAndRemoveUntil(context, Routes.login, (route) => false));
+              Authentication().signOut().then((value) => Navigator.pushNamedAndRemoveUntil(context, Routes.login, (route) => false));
             },
           ),
         ],
