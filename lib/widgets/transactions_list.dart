@@ -92,13 +92,15 @@ class _TransactionsListWidgetState extends State<TransactionsListWidget> {
   }
 
   _getListWidget(List<Transaction> transactions) {
-    if (transactions.isEmpty) {
-      return const Center(
-        child: Text('Nothing here.'),
-      );
-    }
-
     final listViewHeight = MediaQuery.of(context).size.height * 0.6;
+
+    if (transactions.isEmpty) {
+      return SizedBox(
+          height: listViewHeight,
+          child: const Center(
+            child: Text('Nothing here.'),
+          ));
+    }
 
     return SizedBox(
       height: listViewHeight,
@@ -116,9 +118,9 @@ class _TransactionsListWidgetState extends State<TransactionsListWidget> {
     );
   }
 
-  _removeTransaction(Transaction transaction) async {
+  _removeTransaction(Transaction transaction) {
+    service.removeTransaction(transaction.id);
     Provider.of<AppState>(context, listen: false)
         .updateChildBalance(widget.childId, -transaction.amount);
-    await service.removeTransaction(transaction.id);
   }
 }

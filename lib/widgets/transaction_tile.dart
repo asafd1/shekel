@@ -1,15 +1,16 @@
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:shekel/model/transaction.dart';
+import 'package:shekel/util/remote_config.dart';
 import 'package:shekel/util/util.dart';
 
 class TransactionListTile extends StatefulWidget {
   final Transaction transaction;
-  final String currency = '₪';
+  final String currency = RemoteConfig().getReviewMode() ? '\$' : '₪';
 
   final Function? _removeTransaction;
 
-  const TransactionListTile(
+  TransactionListTile(
     this.transaction,
     this._removeTransaction, {
     super.key,

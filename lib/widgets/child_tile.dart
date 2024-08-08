@@ -3,17 +3,18 @@ import 'package:intl/intl.dart';
 import 'package:provider/provider.dart';
 import 'package:shekel/routes/routes.dart';
 import 'package:shekel/util/app_state.dart';
+import 'package:shekel/util/remote_config.dart';
 import 'package:shekel/util/util.dart';
 
 import '../model/user.dart';
 
 class ChildListTile extends StatefulWidget {
   final User child;
-  final String currency = '₪';
+  final String currency = RemoteConfig().getReviewMode() ? '\$' : '₪';
 
   final Function _removeChild;
 
-  const ChildListTile(
+  ChildListTile(
     this.child,
     this._removeChild, {
     super.key,
