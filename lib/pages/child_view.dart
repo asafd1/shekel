@@ -21,17 +21,19 @@ class ChildViewWidget extends StatefulWidget {
 }
 
 class _ChildViewWidgetState extends State<ChildViewWidget> {
-    final String currency = RemoteConfig().getReviewMode() ? '\$' : '₪';
+  final String currency = RemoteConfig().getReviewMode() ? '\$' : '₪';
 
   @override
   Widget build(BuildContext context) {
     Role role = AppState().signedInUser!.role;
+
     User child = role == Role.parent
         ? Provider.of<AppState>(context).getChild(widget.child.id)
         : widget.child;
     return ShekelScaffold(
       Column(children: [
-        Expanded(
+        Flexible(
+          flex: 1,
           child: Column(
             mainAxisAlignment: MainAxisAlignment.start,
             children: [
@@ -63,7 +65,10 @@ class _ChildViewWidgetState extends State<ChildViewWidget> {
             ],
           ),
         ),
-        TransactionsListWidget(child.id, readonly: role != Role.parent),
+        Flexible(
+            flex: 3,
+            child: TransactionsListWidget(child.id,
+                readonly: role != Role.parent)),
       ]),
     );
   }

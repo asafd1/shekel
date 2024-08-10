@@ -15,6 +15,7 @@ class ShekelScaffold extends StatelessWidget {
       endDrawer: user != null ? ShekelDrawer(user) : null,
       appBar: ShekelAppBar(user),
       body: child,
+      resizeToAvoidBottomInset: true, // This allows the Scaffold to resize when the keyboard pops up
     );
   }
 }

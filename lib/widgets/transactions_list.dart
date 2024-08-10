@@ -31,27 +31,29 @@ class _TransactionsListWidgetState extends State<TransactionsListWidget> {
     service = AppState().service;
 
     return Column(
-      children: [
-        Container(
-          color: Colors.blue,
-          padding: const EdgeInsets.all(8.0),
-          child: Row(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            children: [
-              const Text(
-                'Transactions',
-                style: TextStyle(
-                  fontSize: 24.0,
-                  fontWeight: FontWeight.bold,
-                  color: Colors.white,
+        children: [
+          Container(
+            color: Colors.blue,
+            padding: const EdgeInsets.all(8.0),
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                const Text(
+                  'Transactions',
+                  style: TextStyle(
+                    fontSize: 24.0,
+                    fontWeight: FontWeight.bold,
+                    color: Colors.white,
+                  ),
                 ),
-              ),
-              widget.readonly ? Container() : _addTransactionButton(context),
-            ],
+                widget.readonly ? Container() : _addTransactionButton(context),
+              ],
+            ),
           ),
-        ),
-        _listView(transactions),
-      ],
+          Expanded(
+        child: SingleChildScrollView(
+          child:   _listView(transactions),),)
+        ],
     );
   }
 
@@ -78,49 +80,46 @@ class _TransactionsListWidgetState extends State<TransactionsListWidget> {
 
   Widget _listView(list) {
     return FutureBuilder(
-        future: service.getTransactions(widget.childId, limit),
-        builder: (BuildContext context, AsyncSnapshot snapshot) {
-          if (snapshot.connectionState != ConnectionState.done) {
-            return const CircularProgressIndicator();
-          }
-          if (snapshot.hasError) {
-            throw snapshot.error!;
-          }
+      future: service.getTransactions(widget.childId, limit),
+      builder: (BuildContext context, AsyncSnapshot snapshot) {
+        if (snapshot.connectionState == ConnectionState.waiting) {
+          return const Center(child: CircularProgressIndicator());
+        }
+        if (snapshot.hasError) {
+          return Center(child: Text('Error: ${snapshot.error}'));
+        }
 
-          return _getListWidget(snapshot.data);
-        });
-  }
-
-  _getListWidget(List<Transaction> transactions) {
-    final listViewHeight = MediaQuery.of(context).size.height * 0.6;
-
-    if (transactions.isEmpty) {
-      return SizedBox(
-          height: listViewHeight,
-          child: const Center(
-            child: Text('Nothing here.'),
-          ));
-    }
-
-    return SizedBox(
-      height: listViewHeight,
-      child: ListView.builder(
-        physics: const BouncingScrollPhysics(),
-        shrinkWrap: true,
-        itemCount: transactions.length,
-        itemBuilder: (context, index) {
-          return TransactionListTile(
-            transactions[index],
-            widget.readonly ? null : _removeTransaction,
-          );
-        },
-      ),
+        return _getListWidget(snapshot.data);
+      },
     );
   }
 
-  _removeTransaction(Transaction transaction) {
-    service.removeTransaction(transaction.id);
+  _getListWidget(List<Transaction> transactions) {
+    if (transactions.isEmpty) {
+      return const Center(
+        child: Text('Nothing here.'),
+      );
+    }
+
+    return ListView.builder(
+      physics: const BouncingScrollPhysics(),
+      shrinkWrap: true,
+      itemCount: transactions.length,
+      itemBuilder: (context, index) {
+        return TransactionListTile(
+          transactions[index],
+          widget.readonly ? null : _removeTransaction,
+        );
+      },
+    );
+  }
+
+ Future<void> _removeTransaction(Transaction transaction) async {
+    await service.removeTransaction(transaction.id);
     Provider.of<AppState>(context, listen: false)
         .updateChildBalance(widget.childId, -transaction.amount);
+    
+    // Trigger a rebuild of the widget
+    setState(() {});
   }
 }
